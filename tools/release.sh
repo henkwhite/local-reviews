@@ -4,7 +4,8 @@
 # Ablauf: Versionen prüfen → QA → schlanke ZIP (mit vendor/, ohne Entwicklungsdateien)
 # → Inhalt anzeigen → Rückfrage → Tag pushen → gh release create.
 #
-# Aufruf: tools/release.sh            (alles)
+# Aufruf: tools/release.sh            (alles, mit Rückfrage)
+#         RELEASE_CONFIRM=j tools/release.sh (ohne Rückfrage, nur nach ausdrücklicher Freigabe)
 #         tools/release.sh --zip-only (nur ZIP bauen, ohne QA und ohne Release)
 #
 # Die ZIP landet in dist/. Gebaut wird in einem frischen temporären Ordner.
@@ -48,7 +49,12 @@ if [ "${1:-}" = "--zip-only" ]; then
 fi
 
 echo
-read -r -p "Release v$version auf github.com/$REPO veröffentlichen? Das ist öffentlich. [j/N] " answer
+# Bestätigung: RELEASE_CONFIRM=j (z. B. aus einem Skript) oder Rückfrage direkt am Terminal.
+# Nicht von stdin lesen, weil QA und composer die Eingabe sonst aufbrauchen.
+answer="${RELEASE_CONFIRM:-}"
+if [ -z "$answer" ]; then
+	read -r -p "Release v$version auf github.com/$REPO veröffentlichen? Das ist öffentlich. [j/N] " answer < /dev/tty || answer=""
+fi
 if [ "$answer" != "j" ]; then
 	echo "Abgebrochen, nichts veröffentlicht."
 	exit 0
