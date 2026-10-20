@@ -22,6 +22,13 @@ final class Updater {
 	public const REPO = 'https://github.com/henkwhite/local-reviews/';
 
 	/**
+	 * Instanz des Update-Checkers, z. B. für einen manuellen Check.
+	 *
+	 * @var object|null
+	 */
+	public static ?object $checker = null;
+
+	/**
 	 * Startet den Update-Check, sofern die Bibliothek mitgeliefert ist.
 	 */
 	public static function init(): void {
@@ -33,8 +40,9 @@ final class Updater {
 		if ( ! class_exists( \YahnisElsts\PluginUpdateChecker\v5\PucFactory::class ) ) {
 			return;
 		}
-		$checker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker( self::REPO, PLUGIN_FILE, 'local-reviews' );
-		$api     = $checker->getVcsApi();
+		$checker       = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker( self::REPO, PLUGIN_FILE, 'local-reviews' );
+		self::$checker = $checker;
+		$api           = $checker->getVcsApi();
 		if ( method_exists( $api, 'enableReleaseAssets' ) ) {
 			// Nur die angehängte Release-ZIP verwenden: Sie enthält vendor/, der
 			// automatische Quellcode-Download von GitHub nicht. 2 = REQUIRE_RELEASE_ASSETS.
