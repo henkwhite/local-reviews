@@ -123,12 +123,36 @@
 	display: block;
 }
 
-.lr-source {
-	display: block;
+.lr-card__head {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 12px;
+}
+
+.lr-card__head .lr-card__name {
+	padding-right: 0;
+}
+
+.lr-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 6px;
+	margin-top: 15px;
 	font-size: 12px;
 	color: #999;
-	margin-top: 4px;
+}
+
+.lr-card__meta .lr-card__date {
+	margin-top: 0;
+}
+
+.lr-source {
+	font-size: 12px;
+	color: #999;
 	text-decoration: none;
+	white-space: nowrap;
 }
 
 a.lr-source:hover,

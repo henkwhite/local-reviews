@@ -736,7 +736,11 @@ final class Admin_Page {
 							<option value="foreign" <?php selected( $s['show_source'], 'foreign' ); ?>><?php esc_html_e( 'Nur bei anderen Plattformen als Google', 'local-reviews' ); ?></option>
 							<option value="all" <?php selected( $s['show_source'], 'all' ); ?>><?php esc_html_e( 'Bei allen Bewertungen, auch „via Google“', 'local-reviews' ); ?></option>
 						</select>
-						<p class="description"><?php esc_html_e( '„via 11880“ usw. unter jeder Karte, als Link zur Original-Bewertung. Google-Bewertungen ohne Direktlink verlinken auf die Bewertungsliste bei Google. Pro Block bzw. mit show_source="…" überschreibbar.', 'local-reviews' ); ?></p>
+						<select name="local_reviews[source_position]" aria-label="<?php esc_attr_e( 'Position des Plattform-Hinweises', 'local-reviews' ); ?>">
+							<option value="date" <?php selected( $s['source_position'], 'date' ); ?>><?php esc_html_e( 'Hinter dem Datum (14.10.2026 · via Google)', 'local-reviews' ); ?></option>
+							<option value="top" <?php selected( $s['source_position'], 'top' ); ?>><?php esc_html_e( 'Oben rechts neben dem Namen', 'local-reviews' ); ?></option>
+						</select>
+						<p class="description"><?php esc_html_e( '„via 11880“ usw. an jeder Karte, als Link zur Original-Bewertung. Google-Bewertungen ohne Direktlink verlinken auf die Bewertungsliste bei Google. Pro Block bzw. mit show_source="…" überschreibbar.', 'local-reviews' ); ?></p>
 					</td>
 				</tr>
 				<tr>

@@ -65,6 +65,7 @@ Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-review
 * Neue Einstellung „Logo im Badge“: Google-Schriftzug, kein Logo oder eigenes Bild aus der Mediathek. Pro Badge überschreibbar (Block „Logo“, Shortcode brand="google|none|image").
 * Neue Einstellung „Plattform-Hinweis“ (aus / nur andere Plattformen / alle). Blöcke und Shortcodes ohne eigene Angabe folgen ihr.
 * „via Google“ ohne Direktlink zur Bewertung verlinkt auf die Bewertungsliste bei Google.
+* Plattform-Hinweis wahlweise hinter dem Datum („14.10.2026 · via Google“) oder oben rechts neben dem Namen (Einstellung bzw. source_position).
 
 = 1.2.0 =
 * Neue Einstellung „Anzahl im Badge“: Anzahl laut Google oder die sichtbaren Bewertungen im Plugin (alle Plattformen, ohne ausgeblendete). Pro Badge überschreibbar (Block bzw. Shortcode-Attribut count).

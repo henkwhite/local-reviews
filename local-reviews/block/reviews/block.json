@@ -23,6 +23,7 @@
 		"excerpt": { "type": "number", "default": 0 },
 		"source": { "type": "string", "default": "" },
 		"show_source": { "type": "string", "default": "", "enum": [ "", "off", "foreign", "all" ] },
+		"source_position": { "type": "string", "default": "", "enum": [ "", "date", "top" ] },
 		"wrapper_class": { "type": "string", "default": "" }
 	},
 	"supports": {

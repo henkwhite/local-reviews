@@ -151,19 +151,20 @@ final class Render {
 	 */
 	public static function reviews_defaults(): array {
 		return [
-			'header'         => true,
-			'photo'          => true,
-			'limit'          => 0,
-			'columns'        => 1,
-			'columns_tablet' => 0,  // 0: wie columns.
-			'columns_mobile' => 1,
-			'card_width'     => 400, // 0: volle Breite.
-			'min_rating'     => 0,
-			'hide_empty'     => false,
-			'excerpt'        => 0,   // 0: ungekürzt, sonst Zeichen.
-			'source'         => '',  // Leer: alle, sonst Kürzel mit Komma.
-			'show_source'    => '',  // Leer: Einstellung | off | foreign | all.
-			'wrapper_class'  => '',
+			'header'          => true,
+			'photo'           => true,
+			'limit'           => 0,
+			'columns'         => 1,
+			'columns_tablet'  => 0,  // 0: wie columns.
+			'columns_mobile'  => 1,
+			'card_width'      => 400, // 0: volle Breite.
+			'min_rating'      => 0,
+			'hide_empty'      => false,
+			'excerpt'         => 0,   // 0: ungekürzt, sonst Zeichen.
+			'source'          => '',  // Leer: alle, sonst Kürzel mit Komma.
+			'show_source'     => '',  // Leer: Einstellung | off | foreign | all.
+			'source_position' => '', // Leer: Einstellung | date (hinter dem Datum) | top (oben rechts).
+			'wrapper_class'   => '',
 		];
 	}
 
@@ -229,6 +230,7 @@ final class Render {
 		);
 
 		$show_source = in_array( $args['show_source'], [ 'off', 'foreign', 'all' ], true ) ? $args['show_source'] : (string) Settings::get( 'show_source' );
+		$position    = in_array( $args['source_position'], [ 'date', 'top' ], true ) ? $args['source_position'] : (string) Settings::get( 'source_position' );
 		$columns     = max( 1, min( 6, absint( $args['columns'] ) ) );
 		$tablet      = absint( $args['columns_tablet'] );
 		$mobile      = max( 1, min( 6, absint( $args['columns_mobile'] ) ) );
@@ -255,7 +257,7 @@ final class Render {
 
 		$html .= '<div class="lr-reviews__grid">';
 		foreach ( $reviews as $review ) {
-			$html .= self::card( $review, absint( $args['excerpt'] ), $show_source );
+			$html .= self::card( $review, absint( $args['excerpt'] ), $show_source, $position );
 		}
 		$html .= '</div></div>';
 
@@ -311,26 +313,35 @@ final class Render {
 	 * @param array<string, mixed> $review      Eintrag.
 	 * @param int                  $excerpt     Kürzen auf Zeichen, 0 für ungekürzt.
 	 * @param string               $show_source off | foreign | all.
+	 * @param string               $position    date | top.
 	 */
-	private static function card( array $review, int $excerpt, string $show_source ): string {
+	private static function card( array $review, int $excerpt, string $show_source, string $position ): string {
 		$rating = (int) $review['rating'];
 		$text   = Text::excerpt( (string) $review['text'], $excerpt );
 
+		$is_foreign = 'google' !== $review['source'];
+		$label      = ( 'all' === $show_source || ( 'foreign' === $show_source && $is_foreign ) ) ? self::source_label( $review ) : '';
+		$name       = '<span class="lr-card__name">' . esc_html( (string) $review['name'] ) . '</span>';
+
 		$html  = '<div class="lr-card">';
 		$html .= '<div class="lr-card__body">';
-		$html .= '<span class="lr-card__name">' . esc_html( (string) $review['name'] ) . '</span>';
+		// Position „top“: Name links, Plattform rechts in derselben Zeile.
+		$html .= ( 'top' === $position && '' !== $label ) ? '<div class="lr-card__head">' . $name . $label . '</div>' : $name;
 		$html .= '<div class="lr-card__stars lr-stars" role="img" aria-label="' . esc_attr( self::stars_label( $rating ) ) . '">' . esc_html( self::stars( $rating ) ) . '</div>';
 		// Auch ohne Text ein leerer Absatz, damit die Karte gleich hoch ist wie im alten Snippet.
 		$html .= '<p class="lr-card__text">' . nl2br( esc_html( $text ) ) . '</p>';
 		$html .= '</div>';
 
+		// Fußzeile: Datum, bei Position „date“ dahinter „· via …“.
+		$meta = [];
 		if ( $review['timestamp'] > 0 ) {
-			$html .= '<span class="lr-card__date">' . esc_html( wp_date( Settings::date_format(), (int) $review['timestamp'] ) ) . '</span>';
+			$meta[] = '<span class="lr-card__date">' . esc_html( wp_date( Settings::date_format(), (int) $review['timestamp'] ) ) . '</span>';
 		}
-
-		$is_foreign = 'google' !== $review['source'];
-		if ( 'all' === $show_source || ( 'foreign' === $show_source && $is_foreign ) ) {
-			$html .= self::source_label( $review );
+		if ( 'date' === $position && '' !== $label ) {
+			$meta[] = $label;
+		}
+		if ( $meta ) {
+			$html .= '<div class="lr-card__meta">' . implode( '<span class="lr-card__sep" aria-hidden="true">·</span>', $meta ) . '</div>';
 		}
 
 		return $html . '</div>';

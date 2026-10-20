@@ -963,6 +963,18 @@ ok( ! str_contains( do_shortcode( '[google_reviews_lokal header="0" show_source=
 Settings::update( [ 'show_source' => 'quatsch' ] );
 ok( 'foreign' === Settings::get( 'show_source' ), 'ungültiger show_source wird foreign' );
 
+// 1.3.0: Position des Plattform-Hinweises.
+Settings::update( [ 'show_source' => 'all', 'source_position' => 'date' ] );
+$html = do_shortcode( '[google_reviews_lokal header="0"]' );
+ok( 1 === preg_match( '#<div class="lr-card__meta"><span class="lr-card__date">[^<]+</span><span class="lr-card__sep" aria-hidden="true">·</span><a class="lr-source lr-source--google"#', $html ), 'Position date: „Datum · via Google“ in einer Zeile' );
+$html = do_shortcode( '[google_reviews_lokal header="0" source_position="top"]' );
+ok( 1 === preg_match( '#<div class="lr-card__head"><span class="lr-card__name">[^<]+</span><a class="lr-source lr-source--google"#', $html ) && ! str_contains( $html, 'lr-card__sep' ), 'Position top: Name und Plattform in einer Kopfzeile, kein Trenner am Datum' );
+Settings::update( [ 'show_source' => 'off' ] );
+$html = do_shortcode( '[google_reviews_lokal header="0"]' );
+ok( ! str_contains( $html, 'lr-card__sep' ) && str_contains( $html, '<div class="lr-card__meta"><span class="lr-card__date">' ), 'ohne Plattform-Hinweis: nur Datum, kein Trenner' );
+Settings::update( [ 'source_position' => 'quatsch', 'show_source' => 'foreign' ] );
+ok( 'date' === Settings::get( 'source_position' ), 'ungültige Position wird date' );
+
 section( '7. Plattformen' );
 remove_all_filters( 'local_reviews_sources' );
 $s = Sources::all();
