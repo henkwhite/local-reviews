@@ -38,6 +38,7 @@ final class Settings {
 			'badge_logo_id'   => 0,        // Anhang-ID bei badge_logo = image.
 			'show_source'     => 'foreign', // Plattform-Hinweis „via …“: off | foreign | all.
 			'source_position' => 'date', // date: hinter dem Datum | top: oben rechts neben dem Namen.
+			'stars_position'  => 'below', // below: unter dem Namen | right: rechts neben dem Namen.
 		];
 	}
 
@@ -194,6 +195,7 @@ final class Settings {
 			'badge_logo_id'   => absint( $input['badge_logo_id'] ?? 0 ),
 			'show_source'     => in_array( $input['show_source'] ?? '', [ 'off', 'foreign', 'all' ], true ) ? $input['show_source'] : 'foreign',
 			'source_position' => in_array( $input['source_position'] ?? '', [ 'date', 'top' ], true ) ? $input['source_position'] : 'date',
+			'stars_position'  => in_array( $input['stars_position'] ?? '', [ 'below', 'right' ], true ) ? $input['stars_position'] : 'below',
 		];
 	}
 }

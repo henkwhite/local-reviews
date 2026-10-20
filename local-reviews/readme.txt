@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.4.0 =
+* Neue Einstellung „Sterne in den Karten“: unter dem Namen oder rechts neben dem Namen, auch mobil in einer Zeile. Pro Block bzw. mit stars_position überschreibbar.
 
 = 1.3.0 =
 * Neue Einstellung „Logo im Badge“: Google-Schriftzug, kein Logo oder eigenes Bild aus der Mediathek. Pro Badge überschreibbar (Block „Logo“, Shortcode brand="google|none|image").

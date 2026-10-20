@@ -126,12 +126,29 @@
 .lr-card__head {
 	display: flex;
 	justify-content: space-between;
-	align-items: baseline;
+	align-items: flex-start;
 	gap: 12px;
 }
 
 .lr-card__head .lr-card__name {
+	min-width: 0;
 	padding-right: 0;
+	overflow-wrap: anywhere;
+}
+
+/* Rechte Spalte der Kopfzeile: Sterne und/oder Plattform, nie umbrechen. */
+.lr-card__aside {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	flex-shrink: 0;
+	gap: 2px;
+}
+
+.lr-card__head .lr-card__stars {
+	margin-top: 0;
+	line-height: 24px; /* gleiche Höhe wie die Namenszeile */
+	white-space: nowrap;
 }
 
 .lr-card__meta {

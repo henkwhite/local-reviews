@@ -164,6 +164,7 @@ final class Render {
 			'source'          => '',  // Leer: alle, sonst Kürzel mit Komma.
 			'show_source'     => '',  // Leer: Einstellung | off | foreign | all.
 			'source_position' => '', // Leer: Einstellung | date (hinter dem Datum) | top (oben rechts).
+			'stars_position'  => '',  // Leer: Einstellung | below (unter dem Namen) | right (rechts neben dem Namen).
 			'wrapper_class'   => '',
 		];
 	}
@@ -231,6 +232,7 @@ final class Render {
 
 		$show_source = in_array( $args['show_source'], [ 'off', 'foreign', 'all' ], true ) ? $args['show_source'] : (string) Settings::get( 'show_source' );
 		$position    = in_array( $args['source_position'], [ 'date', 'top' ], true ) ? $args['source_position'] : (string) Settings::get( 'source_position' );
+		$stars_right = 'right' === ( in_array( $args['stars_position'], [ 'below', 'right' ], true ) ? $args['stars_position'] : (string) Settings::get( 'stars_position' ) );
 		$columns     = max( 1, min( 6, absint( $args['columns'] ) ) );
 		$tablet      = absint( $args['columns_tablet'] );
 		$mobile      = max( 1, min( 6, absint( $args['columns_mobile'] ) ) );
@@ -257,7 +259,7 @@ final class Render {
 
 		$html .= '<div class="lr-reviews__grid">';
 		foreach ( $reviews as $review ) {
-			$html .= self::card( $review, absint( $args['excerpt'] ), $show_source, $position );
+			$html .= self::card( $review, absint( $args['excerpt'] ), $show_source, $position, $stars_right );
 		}
 		$html .= '</div></div>';
 
@@ -314,8 +316,9 @@ final class Render {
 	 * @param int                  $excerpt     Kürzen auf Zeichen, 0 für ungekürzt.
 	 * @param string               $show_source off | foreign | all.
 	 * @param string               $position    date | top.
+	 * @param bool                 $stars_right Sterne rechts neben dem Namen statt darunter.
 	 */
-	private static function card( array $review, int $excerpt, string $show_source, string $position ): string {
+	private static function card( array $review, int $excerpt, string $show_source, string $position, bool $stars_right = false ): string {
 		$rating = (int) $review['rating'];
 		$text   = Text::excerpt( (string) $review['text'], $excerpt );
 
@@ -323,11 +326,21 @@ final class Render {
 		$label      = ( 'all' === $show_source || ( 'foreign' === $show_source && $is_foreign ) ) ? self::source_label( $review ) : '';
 		$name       = '<span class="lr-card__name">' . esc_html( (string) $review['name'] ) . '</span>';
 
+		$stars     = '<div class="lr-card__stars lr-stars" role="img" aria-label="' . esc_attr( self::stars_label( $rating ) ) . '">' . esc_html( self::stars( $rating ) ) . '</div>';
+		$label_top = 'top' === $position && '' !== $label;
+
 		$html  = '<div class="lr-card">';
 		$html .= '<div class="lr-card__body">';
-		// Position „top“: Name links, Plattform rechts in derselben Zeile.
-		$html .= ( 'top' === $position && '' !== $label ) ? '<div class="lr-card__head">' . $name . $label . '</div>' : $name;
-		$html .= '<div class="lr-card__stars lr-stars" role="img" aria-label="' . esc_attr( self::stars_label( $rating ) ) . '">' . esc_html( self::stars( $rating ) ) . '</div>';
+		if ( $stars_right || $label_top ) {
+			// Kopfzeile: Name links, rechts Sterne und/oder Plattform, auch mobil in einer Zeile.
+			$aside = ( $stars_right ? $stars : '' ) . ( $label_top ? $label : '' );
+			$html .= '<div class="lr-card__head">' . $name . '<div class="lr-card__aside">' . $aside . '</div></div>';
+			if ( ! $stars_right ) {
+				$html .= $stars;
+			}
+		} else {
+			$html .= $name . $stars;
+		}
 		// Auch ohne Text ein leerer Absatz, damit die Karte gleich hoch ist wie im alten Snippet.
 		$html .= '<p class="lr-card__text">' . nl2br( esc_html( $text ) ) . '</p>';
 		$html .= '</div>';

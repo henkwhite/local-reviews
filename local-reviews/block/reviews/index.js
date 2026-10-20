@@ -100,7 +100,19 @@
 								{ value: 'top', label: __( 'Oben rechts neben dem Namen', 'local-reviews' ) }
 							],
 							onChange: function ( value ) {
-								props.setAttributes( { source_position: value } );
+								props.setAttributes( { source_position: value } ),
+						el( components.SelectControl, {
+							label: __( 'Sterne', 'local-reviews' ),
+							value: attrs.stars_position,
+							options: [
+								{ value: '', label: __( 'Wie in den Einstellungen', 'local-reviews' ) },
+								{ value: 'below', label: __( 'Unter dem Namen', 'local-reviews' ) },
+								{ value: 'right', label: __( 'Rechts neben dem Namen', 'local-reviews' ) }
+							],
+							onChange: function ( value ) {
+								props.setAttributes( { stars_position: value } );
+							}
+						} );
 							}
 						} );
 							}

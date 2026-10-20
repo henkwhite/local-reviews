@@ -701,6 +701,16 @@ final class Admin_Page {
 					</td>
 				</tr>
 				<tr>
+					<th scope="row"><label for="lr-stars-position"><?php esc_html_e( 'Sterne in den Karten', 'local-reviews' ); ?></label></th>
+					<td>
+						<select id="lr-stars-position" name="local_reviews[stars_position]">
+							<option value="below" <?php selected( $s['stars_position'], 'below' ); ?>><?php esc_html_e( 'Unter dem Namen', 'local-reviews' ); ?></option>
+							<option value="right" <?php selected( $s['stars_position'], 'right' ); ?>><?php esc_html_e( 'Rechts neben dem Namen (auch mobil)', 'local-reviews' ); ?></option>
+						</select>
+						<p class="description"><?php esc_html_e( 'Pro Block bzw. mit stars_position="below|right" überschreibbar.', 'local-reviews' ); ?></p>
+					</td>
+				</tr>
+				<tr>
 					<th scope="row"><label for="lr-sort"><?php esc_html_e( 'Sortierung', 'local-reviews' ); ?></label></th>
 					<td>
 						<select id="lr-sort" name="local_reviews[sort]">
