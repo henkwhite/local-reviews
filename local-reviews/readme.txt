@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ Local Reviews holt täglich über die Places API (New) Note, Anzahl, Profilfoto 
 * Einträge ausblenden, manuelle und importierte bearbeiten oder löschen
 * Drei Blöcke und drei Shortcodes: Bewertungen mit Kopfbereich, Badge, Button zu Google
 * Darstellung global einstellbar und pro Block/Shortcode überschreibbar
-* Seiten-Cache (WP Rocket, AccelerateWP, LiteSpeed) wird nur bei echten Änderungen geleert
+* Seiten-Cache (WP Rocket, AccelerateWP, LiteSpeed, W3 Total Cache, WP Super Cache, WP Fastest Cache, Cache Enabler, SiteGround Optimizer, Breeze) wird nur bei echten Änderungen geleert
 * Updates direkt aus GitHub-Releases
 
 Ausführliche Anleitung im Backend unter Einstellungen › Local Reviews › Anleitung.
@@ -60,6 +60,11 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.1.0 =
+* Seiten-Cache wird zusätzlich für W3 Total Cache, WP Super Cache, WP Fastest Cache, Cache Enabler, SiteGround Optimizer und Breeze geleert. Ein Fehler bei einem Cache-Plugin hält die anderen nicht mehr auf.
+* Statusseite nennt alle erkannten Cache-Plugins.
+* Einstellungen: Feld für das Datumsformat ist breiter.
 
 = 1.0.0 =
 * Erste Version: Ablösung der Fluent-Snippets „Google Rezensionen“.

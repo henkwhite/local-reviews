@@ -472,6 +472,24 @@ ok( false === Cache::purge_if_changed( $before ) && 0 === $GLOBALS['hook_count']
 
 /* ============================================================== 4. Importer */
 
+// Weitere Cache-Plugins (1.1.0): Testfunktionen simulieren W3TC und Breeze, eines wirft einen Fehler.
+if ( ! function_exists( 'w3tc_flush_all' ) ) {
+	function w3tc_flush_all(): void { // phpcs:ignore
+		$GLOBALS['lr_test_w3tc'] = ( $GLOBALS['lr_test_w3tc'] ?? 0 ) + 1;
+		throw new RuntimeException( 'W3TC kaputt' );
+	}
+}
+if ( ! function_exists( 'breeze_clear_all_cache' ) ) {
+	function breeze_clear_all_cache(): void { // phpcs:ignore
+		$GLOBALS['lr_test_breeze'] = ( $GLOBALS['lr_test_breeze'] ?? 0 ) + 1;
+	}
+}
+Profile::update_status( [ 'last_error' => '' ] );
+Cache::purge();
+ok( 1 === ( $GLOBALS['lr_test_w3tc'] ?? 0 ) && 1 === ( $GLOBALS['lr_test_breeze'] ?? 0 ), 'W3 Total Cache und Breeze werden geleert' );
+ok( str_contains( Profile::status()['last_error'], 'W3 Total Cache' ), 'Fehler eines Cache-Plugins landet unter „Letzter Fehler“ und hält die anderen nicht auf', Profile::status()['last_error'] );
+ok( str_contains( Cache::detected(), 'W3 Total Cache' ) && str_contains( Cache::detected(), 'Breeze' ), 'Statusseite nennt erkannte Cache-Plugins', Cache::detected() );
+
 section( '4. Import' );
 reset_state();
 

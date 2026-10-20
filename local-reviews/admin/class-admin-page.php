@@ -583,7 +583,7 @@ final class Admin_Page {
 				<tr><th><?php esc_html_e( 'Seiten-Cache leeren', 'local-reviews' ); ?></th><td>
 					<?php
 					$cache = Cache::detected();
-					echo '' !== $cache ? esc_html( sprintf( /* translators: %s: Funktion. */ __( 'ja (%s), nur bei geänderten Daten', 'local-reviews' ), $cache ) ) : esc_html__( 'kein unterstütztes Cache-Plugin erkannt, Hook local_reviews_updated', 'local-reviews' );
+					echo '' !== $cache ? esc_html( sprintf( /* translators: %s: Funktion. */ __( '%s – wird nur bei geänderten Daten geleert', 'local-reviews' ), $cache ) ) : esc_html__( 'kein unterstütztes Cache-Plugin erkannt, Hook local_reviews_updated', 'local-reviews' );
 					?>
 				</td></tr>
 				<tr><th><?php esc_html_e( 'Alte Snippet-Daten', 'local-reviews' ); ?></th><td>
@@ -696,7 +696,7 @@ final class Admin_Page {
 				<tr>
 					<th scope="row"><label for="lr-date-format"><?php esc_html_e( 'Datumsformat', 'local-reviews' ); ?></label></th>
 					<td>
-						<input type="text" id="lr-date-format" name="local_reviews[date_format]" value="<?php echo esc_attr( $s['date_format'] ); ?>" class="small-text code" placeholder="<?php echo esc_attr( (string) get_option( 'date_format' ) ); ?>">
+						<input type="text" id="lr-date-format" name="local_reviews[date_format]" value="<?php echo esc_attr( $s['date_format'] ); ?>" class="regular-text code" placeholder="<?php echo esc_attr( (string) get_option( 'date_format' ) ); ?>">
 						<p class="description"><?php esc_html_e( 'PHP-Datumsformat, z. B. d.m.Y. Leer: Format aus Einstellungen > Allgemein.', 'local-reviews' ); ?></p>
 					</td>
 				</tr>

@@ -3,7 +3,7 @@
  * Plugin Name:       Local Reviews
  * Plugin URI:        https://github.com/henkwhite/local-reviews
  * Description:       Google-Bewertungen lokal speichern und anzeigen, ergänzt um Bewertungen anderer Plattformen. Kein Nachladen von Google im Frontend.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Author:            Kronfink
@@ -19,7 +19,7 @@ namespace LocalReviews;
 
 defined( 'ABSPATH' ) || exit;
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 
 // Optionen. Das Archiv und der API-Key werden ohne Autoload gespeichert.
 const OPTION_SETTINGS = 'local_reviews_settings';

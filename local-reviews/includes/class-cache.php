@@ -37,20 +37,50 @@ final class Cache {
 	}
 
 	/**
-	 * Leert den Seiten-Cache bekannter Plugins und feuert die Hooks.
+	 * Unterstützte Cache-Plugins: Name => [ Funktion zum Leeren, Argumente ].
 	 *
-	 * Ein Fehler beim Leeren bricht nichts ab, er landet unter „Letzter Fehler“.
+	 * Die Liste entspricht dem alten Snippet. Angesprochen wird nur, was aufrufbar ist.
+	 * LiteSpeed Cache läuft über seinen Hook, siehe purge().
+	 *
+	 * @return array<string, array{0: string|array{0: string, 1: string}, 1: array<int, mixed>}>
+	 */
+	private static function purgers(): array {
+		return [
+			'WP Rocket / AccelerateWP' => [ 'rocket_clean_domain', [] ],
+			'W3 Total Cache'           => [ 'w3tc_flush_all', [] ],
+			'WP Super Cache'           => [ 'wp_cache_clear_cache', [] ],
+			'WP Fastest Cache'         => [ 'wpfc_clear_all_cache', [ true ] ],
+			'Cache Enabler'            => [ [ 'Cache_Enabler', 'clear_complete_cache' ], [] ],
+			'SiteGround Optimizer'     => [ 'sg_cachepress_purge_cache', [] ],
+			'Breeze'                   => [ 'breeze_clear_all_cache', [] ],
+		];
+	}
+
+	/**
+	 * Leert den Seiten-Cache aller erkannten Plugins und feuert die Hooks.
+	 *
+	 * Jedes Plugin einzeln: Ein Fehler bei einem bricht die anderen nicht ab,
+	 * er landet unter „Letzter Fehler“.
 	 */
 	public static function purge(): void {
-		try {
-			if ( function_exists( 'rocket_clean_domain' ) ) {
-				rocket_clean_domain(); // WP Rocket und AccelerateWP.
+		foreach ( self::purgers() as $name => [ $callback, $args ] ) {
+			if ( ! is_callable( $callback ) ) {
+				continue;
 			}
-			if ( has_action( 'litespeed_purge_all' ) ) {
+			try {
+				call_user_func_array( $callback, $args );
+			} catch ( \Throwable $e ) {
+				/* translators: %s: Name des Cache-Plugins. */
+				Profile::log_error( sprintf( __( 'Cache von %s konnte nicht geleert werden:', 'local-reviews' ), $name ) . ' ' . $e->getMessage() );
+			}
+		}
+		if ( has_action( 'litespeed_purge_all' ) ) {
+			try {
 				do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Hook von LiteSpeed Cache.
+			} catch ( \Throwable $e ) {
+				/* translators: %s: Name des Cache-Plugins. */
+				Profile::log_error( sprintf( __( 'Cache von %s konnte nicht geleert werden:', 'local-reviews' ), 'LiteSpeed Cache' ) . ' ' . $e->getMessage() );
 			}
-		} catch ( \Throwable $e ) {
-			Profile::log_error( __( 'Cache konnte nicht geleert werden:', 'local-reviews' ) . ' ' . $e->getMessage() );
 		}
 
 		/**
@@ -66,15 +96,18 @@ final class Cache {
 	}
 
 	/**
-	 * Ob ein unterstütztes Cache-Plugin erkannt wurde, für die Statusseite.
+	 * Namen der erkannten Cache-Plugins, für die Statusseite. Leer, wenn keins erkannt wurde.
 	 */
 	public static function detected(): string {
-		if ( function_exists( 'rocket_clean_domain' ) ) {
-			return 'rocket_clean_domain';
+		$found = [];
+		foreach ( self::purgers() as $name => [ $callback ] ) {
+			if ( is_callable( $callback ) ) {
+				$found[] = $name;
+			}
 		}
 		if ( has_action( 'litespeed_purge_all' ) ) {
-			return 'litespeed_purge_all';
+			$found[] = 'LiteSpeed Cache';
 		}
-		return '';
+		return implode( ', ', $found );
 	}
 }
