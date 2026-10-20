@@ -15,7 +15,7 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
  * Löscht die Daten der aktuellen Site.
  */
 function local_reviews_uninstall_site(): void {
-	foreach ( [ 'local_reviews_settings', 'local_reviews_api_key', 'local_reviews_archive', 'local_reviews_profile', 'local_reviews_status', 'local_reviews_migrated' ] as $option ) {
+	foreach ( [ 'local_reviews_settings', 'local_reviews_api_key', 'local_reviews_archive', 'local_reviews_profile', 'local_reviews_status', 'local_reviews_migrated', 'local_reviews_version', 'local_reviews_lock' ] as $option ) {
 		delete_option( $option );
 	}
 	wp_clear_scheduled_hook( 'local_reviews_fetch' );

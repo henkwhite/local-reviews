@@ -110,4 +110,54 @@ final class Cache {
 		}
 		return implode( ', ', $found );
 	}
+
+	/**
+	 * Funktionen, die zusätzlich minifizierte bzw. zusammengefasste CSS- und JS-Dateien
+	 * verwerfen. Für Plugins, deren „alles leeren“ diese Dateien nicht einschließt.
+	 *
+	 * @return array<string, string|array{0: string, 1: string}>
+	 */
+	private static function asset_purgers(): array {
+		return [
+			'WP Rocket / AccelerateWP (CSS/JS)' => 'rocket_clean_minify',
+			'Autoptimize'                       => [ 'autoptimizeCache', 'clearall' ],
+		];
+	}
+
+	/**
+	 * Nach einem Plugin-Update: Seiten-Cache und minifizierte CSS-/JS-Dateien leeren,
+	 * damit Besucher nicht die alte, zwischengespeicherte frontend.css bekommen.
+	 *
+	 * Hintergrund: AccelerateWP hängt seinen eigenen Zeitstempel an die minifizierte
+	 * Kopie und erkennt eine neue Plugin-Version deshalb nicht.
+	 */
+	public static function purge_after_update(): void {
+		foreach ( self::asset_purgers() as $name => $callback ) {
+			if ( ! is_callable( $callback ) ) {
+				continue;
+			}
+			try {
+				call_user_func( $callback );
+			} catch ( \Throwable $e ) {
+				/* translators: %s: Name des Cache-Plugins. */
+				Profile::log_error( sprintf( __( 'Cache von %s konnte nicht geleert werden:', 'local-reviews' ), $name ) . ' ' . $e->getMessage() );
+			}
+		}
+		self::purge();
+	}
+
+	/**
+	 * Prüft bei jedem Aufruf (eine Option mit Autoload), ob eine neue Version läuft,
+	 * und leert dann einmalig alle Caches.
+	 */
+	public static function maybe_purge_after_update(): void {
+		$stored = (string) get_option( OPTION_VERSION, '' );
+		if ( VERSION === $stored ) {
+			return;
+		}
+		// Erst merken, dann leeren: verhindert doppelte Läufe bei parallelen Aufrufen.
+		// Auch ohne gespeicherte Version leeren: Installationen vor 1.4.2 kennen die Option nicht.
+		update_option( OPTION_VERSION, VERSION, true );
+		self::purge_after_update();
+	}
 }

@@ -490,6 +490,28 @@ ok( 1 === ( $GLOBALS['lr_test_w3tc'] ?? 0 ) && 1 === ( $GLOBALS['lr_test_breeze'
 ok( str_contains( Profile::status()['last_error'], 'W3 Total Cache' ), 'Fehler eines Cache-Plugins landet unter „Letzter Fehler“ und hält die anderen nicht auf', Profile::status()['last_error'] );
 ok( str_contains( Cache::detected(), 'W3 Total Cache' ) && str_contains( Cache::detected(), 'Breeze' ), 'Statusseite nennt erkannte Cache-Plugins', Cache::detected() );
 
+// 1.4.2: nach einem Update einmal Seiten- und CSS/JS-Cache leeren.
+if ( ! function_exists( 'rocket_clean_minify' ) ) {
+	function rocket_clean_minify(): void { // phpcs:ignore
+		$GLOBALS['lr_test_minify'] = ( $GLOBALS['lr_test_minify'] ?? 0 ) + 1;
+	}
+}
+$GLOBALS['lr_test_minify'] = 0;
+$lr_updated                = 0;
+$lr_count_updated          = static function () use ( &$lr_updated ): void {
+	++$lr_updated;
+};
+add_action( 'local_reviews_updated', $lr_count_updated );
+update_option( 'local_reviews_version', '1.4.1' );
+Cache::maybe_purge_after_update();
+ok( 1 === $GLOBALS['lr_test_minify'] && 1 === $lr_updated && LocalReviews\VERSION === get_option( 'local_reviews_version' ), 'neue Version: Minify- und Seiten-Cache einmal geleert, Version gemerkt' );
+Cache::maybe_purge_after_update();
+ok( 1 === $GLOBALS['lr_test_minify'] && 1 === $lr_updated, 'gleiche Version: kein weiteres Leeren' );
+delete_option( 'local_reviews_version' );
+Cache::maybe_purge_after_update();
+ok( 2 === $GLOBALS['lr_test_minify'], 'ohne gespeicherte Version (Installation vor 1.4.2): wird geleert' );
+remove_action( 'local_reviews_updated', $lr_count_updated );
+
 section( '4. Import' );
 reset_state();
 
