@@ -35,6 +35,18 @@
 						components.PanelBody,
 						{ title: __( 'Inhalt', 'local-reviews' ) },
 						el( components.SelectControl, {
+							label: __( 'Variante', 'local-reviews' ),
+							value: attrs.variant,
+							options: [
+								{ value: '', label: __( 'Wie in den Einstellungen', 'local-reviews' ) },
+								{ value: 'classic', label: __( 'Klassisch (eine Zeile)', 'local-reviews' ) },
+								{ value: 'stacked', label: __( 'Gestapelt mit Plattformen und Linktext', 'local-reviews' ) }
+							],
+							onChange: function ( value ) {
+								props.setAttributes( { variant: value } );
+							}
+						} ),
+						el( components.SelectControl, {
 							label: __( 'Logo', 'local-reviews' ),
 							value: attrs.logo || ( attrs.brand === false ? 'none' : '' ),
 							options: [
@@ -50,6 +62,24 @@
 						} ),
 						toggleControl( props, 'rating', __( 'Note als Zahl', 'local-reviews' ) ),
 						toggleControl( props, 'arrow', __( 'Pfeil am Ende', 'local-reviews' ) ),
+						// Nur für die gestapelte Variante; bei „Wie in den Einstellungen“ ebenfalls zeigen,
+						// weil der Editor die globale Einstellung nicht kennt.
+						'classic' !== attrs.variant && el( components.TextControl, {
+							label: __( 'Linktext rechts (gestapelt)', 'local-reviews' ),
+							help: __( 'Leer = ausblenden.', 'local-reviews' ),
+							value: attrs.link_text,
+							onChange: function ( value ) {
+								props.setAttributes( { link_text: value } );
+							}
+						} ),
+						'classic' !== attrs.variant && el( components.TextControl, {
+							label: __( 'Zeile unter der Anzahl (gestapelt)', 'local-reviews' ),
+							help: __( 'Leer = Plattformen automatisch, z. B. „u. a. auf Google, 11880 & GoLocal“.', 'local-reviews' ),
+							value: attrs.subline,
+							onChange: function ( value ) {
+								props.setAttributes( { subline: value } );
+							}
+						} ),
 						el( components.SelectControl, {
 							label: __( 'Anzahl', 'local-reviews' ),
 							value: attrs.count,

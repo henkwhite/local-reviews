@@ -1025,6 +1025,67 @@ wp_dequeue_script( LocalReviews\Render::SCRIPT );
 do_shortcode( '[google_reviews_lokal header="0"]' );
 ok( ! wp_script_is( LocalReviews\Render::SCRIPT, 'enqueued' ), 'ohne Kürzung kein Skript' );
 
+// 1.5.0: Badge-Variante „gestapelt“.
+reset_state();
+Profile::update( [ 'rating' => 4.9, 'count' => 83, 'name' => 'Testfirma GmbH', 'reviews_uri' => 'https://www.google.com/maps/place//data=liste' ] );
+seed(
+	[
+		entry( 'v1', [ 'name' => 'G1', 'timestamp' => $d( '2024-05-01' ) ] ),
+		entry( 'v2', [ 'name' => 'G2', 'timestamp' => $d( '2024-04-01' ) ] ),
+		entry( 'v3', [ 'source' => '11880', 'name' => 'E1', 'timestamp' => $d( '2024-03-01' ) ] ),
+		entry( 'v4', [ 'source' => '11880', 'name' => 'E2', 'timestamp' => $d( '2024-02-01' ) ] ),
+		entry( 'v5', [ 'source' => 'golocal', 'name' => 'L1', 'timestamp' => $d( '2024-01-01' ) ] ),
+		entry( 'v6', [ 'source' => 'facebook', 'name' => 'F1', 'hidden' => true, 'timestamp' => $d( '2023-12-01' ) ] ),
+	]
+);
+ok( 'classic' === Settings::get( 'badge_variant' ), 'Variante Standard: classic' );
+$h = do_shortcode( '[google_badge_einzeln]' );
+ok( str_starts_with( $h, '<p class="lr-badge">' ) && ! str_contains( $h, 'lr-badge--stacked' ), 'classic unverändert: <p> ohne Modifier' );
+ok( [ 'Google', '11880', 'GoLocal' ] === Profile::platforms(), 'platforms(): nach Anzahl, Google bei Gleichstand vorn, ausgeblendete zählen nicht', dump( Profile::platforms() ) );
+$h = do_shortcode( '[google_badge_einzeln variant="stacked" label="Kundenbewertungen" count="local"]' );
+ok( str_starts_with( $h, '<div class="lr-badge lr-badge--stacked">' ), 'stacked ohne Link: <div> mit Modifier', mb_substr( $h, 0, 80 ) );
+ok( str_contains( $h, '<span class="lr-badge__count">5 Kundenbewertungen</span>' ), 'stacked: Anzahl mit Label' );
+ok( str_contains( $h, '<span class="lr-badge__sub">u. a. auf Google, 11880 &amp; GoLocal</span>' ), 'stacked: Plattform-Zeile automatisch', dump( $h ) );
+ok( str_contains( $h, '<span class="lr-badge__divider" aria-hidden="true"></span><span class="lr-badge__cta">Alle Bewertungen ansehen <span class="lr-badge__cta-arrow" aria-hidden="true">→</span></span>' ), 'stacked: Trennlinie, Linktext, Pfeil' );
+ok( str_contains( $h, 'lr-badge__stars' ) && ! str_contains( $h, 'lr-badge__arrow' ), 'stacked: Sterne, kein klassischer Pfeil' );
+$h = do_shortcode( '[google_badge_einzeln variant="stacked" link_text="" arrow="0" subline="Eigene <b>Zeile</b>"]' );
+ok( ! str_contains( $h, 'lr-badge__cta' ) && ! str_contains( $h, 'lr-badge__divider' ), 'link_text leer: kein Linktext, keine Trennlinie' );
+ok( str_contains( $h, '<span class="lr-badge__sub">Eigene &lt;b&gt;Zeile&lt;/b&gt;</span>' ), 'subline eigener Text, escaped' );
+$h = do_shortcode( '[google_badge_einzeln variant="stacked" link="google" link_text="Mehr" arrow="0"]' );
+ok( str_starts_with( $h, '<a class="lr-badge lr-badge--stacked" href="https://www.google.com/maps/place//data=liste" target="_blank" rel="noopener nofollow">' ) && str_contains( $h, '<span class="lr-badge__cta">Mehr</span>' ), 'stacked mit Link: ganzes Badge als <a>, Pfeil aus', mb_substr( $h, 0, 140 ) );
+Settings::update( [ 'badge_variant' => 'stacked' ] );
+ok( str_contains( do_shortcode( '[google_badge_einzeln]' ), 'lr-badge--stacked' ), 'Einstellung stacked gilt für Shortcode' );
+ok( str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge /-->' )[0] ), 'lr-badge--stacked' ), 'Block ohne Angabe folgt Einstellung' );
+ok( ! str_contains( do_shortcode( '[google_badge_einzeln variant="classic"]' ), 'lr-badge--stacked' ), 'variant="classic" überschreibt Einstellung' );
+$h = render_block( parse_blocks( '<!-- wp:local-reviews/badge {"variant":"classic"} /-->' )[0] );
+ok( ! str_contains( $h, 'lr-badge--stacked' ) && str_contains( $h, 'wp-block-local-reviews-badge' ), 'Block variant=classic überschreibt Einstellung' );
+$h = render_block( parse_blocks( '<!-- wp:local-reviews/badge {"subline":"Block-Zeile","link_text":"Ansehen"} /-->' )[0] );
+ok( str_contains( $h, '>Block-Zeile</span>' ) && str_contains( $h, '<span class="lr-badge__cta">Ansehen ' ), 'Block-Attribute subline und link_text' );
+ok( str_contains( do_shortcode( '[google_badge_einzeln variant="quatsch"]' ), 'lr-badge--stacked' ), 'ungültiges variant folgt Einstellung' );
+Settings::update( [ 'badge_variant' => 'quatsch' ] );
+ok( 'classic' === Settings::get( 'badge_variant' ), 'ungültiger Wert für badge_variant wird classic' );
+seed(
+	[
+		entry( 'o1', [ 'source' => 'other', 'source_label' => 'werkenntdenbesten', 'name' => 'O1' ] ),
+		entry( 'o2', [ 'source' => 'other', 'name' => 'O2' ] ),
+		entry( 'o3', [ 'source' => 'other', 'name' => 'O3' ] ),
+		entry( 'o4', [ 'source' => 'trustpilot', 'name' => 'O4' ] ),
+		entry( 'o5', [ 'source' => 'houzz', 'name' => 'O5' ] ),
+		entry( 'o6', [ 'source' => 'myhammer', 'name' => 'O6' ] ),
+	]
+);
+ok( [ 'Houzz', 'MyHammer', 'Trustpilot', 'werkenntdenbesten' ] === Profile::platforms(), 'platforms(): „Sonstige“ ohne Namen fehlt, Freitext zählt, alphabetisch ohne Groß/Klein', dump( Profile::platforms() ) );
+$h = do_shortcode( '[google_badge_einzeln variant="stacked" rating="1"]' );
+ok( str_contains( $h, '<span class="lr-badge__sub">u. a. auf Houzz, MyHammer &amp; Trustpilot</span>' ), 'mehr als drei Plattformen: nur die ersten drei', dump( $h ) );
+ok( str_contains( $h, '<span class="lr-badge__top"><span class="lr-badge__brand"' ) && str_contains( $h, '<span class="lr-badge__rating">' . number_format_i18n( 4.9, 1 ) . '</span><span class="lr-badge__stars' ), 'stacked: Logo, Note und Sterne in der ersten Zeile' );
+ok( str_starts_with( do_shortcode( '[google_badge_einzeln variant="stacked" link="custom" url="#bewertungen"]' ), '<a class="lr-badge lr-badge--stacked" href="#bewertungen">' ), 'stacked mit Anker: ohne target' );
+ok( str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge {"variant":"stacked"} /-->' )[0] ), '>Alle Bewertungen ansehen <span class="lr-badge__cta-arrow"' ), 'Block ohne Angabe: Standard-Linktext' );
+seed( [ entry( 'w1', [ 'name' => 'Nur Google' ] ) ] );
+ok( str_contains( do_shortcode( '[google_badge_einzeln variant="stacked"]' ), '<span class="lr-badge__sub">auf Google</span>' ), 'eine Plattform: „auf Google“ ohne „u. a.“' );
+seed( [] );
+$h = do_shortcode( '[google_badge_einzeln variant="stacked"]' );
+ok( str_contains( $h, 'lr-badge__count">83 Bewertungen' ) && ! str_contains( $h, 'lr-badge__sub' ), 'keine Bewertungen im Plugin: Anzahl laut Google, keine Plattform-Zeile' );
+
 section( '7. Plattformen' );
 remove_all_filters( 'local_reviews_sources' );
 $s = Sources::all();

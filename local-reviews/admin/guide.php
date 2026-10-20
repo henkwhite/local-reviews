@@ -72,9 +72,12 @@ $local_reviews_reviews_url  = LocalReviews\Admin_Page::url( [ 'tab' => 'reviews'
 			<tr><td><code>brand</code></td><td>(Einstellung)</td><td>Logo: <code>google</code> (Schriftzug), <code>none</code> bzw. <code>0</code> (kein Logo), <code>image</code> (Bild aus Einstellungen › Logo im Badge). Standard aus den Einstellungen</td></tr>
 			<tr><td><code>rating</code></td><td>0</td><td>Note als Zahl vor den Sternen</td></tr>
 			<tr><td><code>label</code></td><td>Bewertungen</td><td>Text hinter der Anzahl</td></tr>
-			<tr><td><code>arrow</code></td><td>1</td><td>Pfeil „›“ am Ende</td></tr>
+			<tr><td><code>arrow</code></td><td>1</td><td>Pfeil am Ende („›“, gestapelt „→“ hinter dem Linktext)</td></tr>
 			<tr><td><code>link</code></td><td>none</td><td><code>none</code>, <code>google</code> (Bewertungsliste) oder <code>custom</code> mit <code>url</code></td></tr>
 			<tr><td><code>url</code></td><td>(leer)</td><td>Ziel bei <code>link="custom"</code>, z. B. <code>#bewertungen</code></td></tr>
+			<tr><td><code>variant</code></td><td>(Einstellung)</td><td><code>classic</code> (eine Zeile) oder <code>stacked</code> (Sterne, darunter Anzahl und Plattformen, rechts der Linktext). Standard aus Einstellungen › Badge-Variante</td></tr>
+			<tr><td><code>link_text</code></td><td>Alle Bewertungen ansehen</td><td>Nur <code>stacked</code>: Text rechts, mit <code>arrow</code> gefolgt von „→“. Leer blendet ihn samt Trennlinie aus</td></tr>
+			<tr><td><code>subline</code></td><td>(automatisch)</td><td>Nur <code>stacked</code>: Zeile unter der Anzahl. Leer = die bis zu drei häufigsten Plattformen, z. B. „u. a. auf Google, 11880 &amp; GoLocal“. Passend dazu <code>count="local"</code>, sonst zählt die Zahl nur Google. Ohne <code>link</code> ist der Linktext nur Text, z. B. für den Auslöser eines GenerateBlocks-Overlays</td></tr>
 			<tr><td><code>count</code></td><td>(Einstellung)</td><td><code>google</code> (Anzahl laut Google) oder <code>local</code> (sichtbare Bewertungen im Plugin, alle Plattformen). Standard aus Einstellungen › Anzahl im Badge</td></tr>
 			<tr><td><code>wrapper_class</code></td><td>(leer)</td><td>Eigene CSS-Klassen</td></tr>
 		</tbody>
@@ -181,7 +184,7 @@ Werkenntdenbesten,Hans Muster,5,01.02.2026,Top!,</code></pre>
 			<tr><td><code>local_reviews_updated</code> (Action)</td><td>Feuert, wenn sich angezeigte Daten geändert haben. Für eigene Cache-Lösungen. Automatisch geleert werden WP Rocket/AccelerateWP, LiteSpeed Cache, W3 Total Cache, WP Super Cache, WP Fastest Cache, Cache Enabler, SiteGround Optimizer und Breeze. Nach einem Plugin-Update zusätzlich einmal die minifizierten CSS-/JS-Dateien (WP Rocket/AccelerateWP, Autoptimize).</td></tr>
 			<tr><td><code>kf_google_reviews_updated</code> (Action)</td><td>Veraltet, feuert nur zur Kompatibilität mit den alten Snippets. Bitte <code>local_reviews_updated</code> nutzen.</td></tr>
 			<tr><td><code>local_reviews_sources</code> (Filter)</td><td>Plattformliste ändern: <code>add_filter( 'local_reviews_sources', fn( $s ) =&gt; $s + [ 'werkenntdenbesten' =&gt; 'Werkenntdenbesten' ] );</code> – mit <code>+</code> oder <code>$s['kuerzel'] = …</code> ergänzen, nicht mit <code>array_merge()</code> (das macht aus dem Kürzel 11880 eine 0).</td></tr>
-			<tr><td>CSS</td><td>Klassen <code>lr-header</code>, <code>lr-reviews__grid</code>, <code>lr-card</code>, <code>lr-card__name|stars|text|date</code>, <code>lr-source lr-source--{plattform}</code>, <code>lr-badge</code>, <code>lr-button lr-button--google</code>. Variablen <code>--lr-star-color</code>, <code>--lr-font</code>, <code>--lr-card-width</code>.</td></tr>
+			<tr><td>CSS</td><td>Klassen <code>lr-header</code>, <code>lr-reviews__grid</code>, <code>lr-card</code>, <code>lr-card__name|stars|text|date</code>, <code>lr-source lr-source--{plattform}</code>, <code>lr-badge</code> (gestapelt zusätzlich <code>lr-badge--stacked</code>, <code>lr-badge__count|sub|cta</code>), <code>lr-button lr-button--google</code>. Variablen <code>--lr-star-color</code>, <code>--lr-font</code>, <code>--lr-card-width</code>, für den gestapelten Badge <code>--lr-badge-text</code>, <code>--lr-badge-muted</code>, <code>--lr-badge-link</code>, <code>--lr-badge-line</code>.</td></tr>
 		</tbody>
 	</table>
 

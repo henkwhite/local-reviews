@@ -2,11 +2,11 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "local-reviews/badge",
-	"version": "1.4.2",
+	"version": "1.5.0",
 	"title": "Bewertungs-Badge (Local Reviews)",
 	"category": "widgets",
 	"icon": "awards",
-	"description": "Google-Schriftzug, Sterne und Anzahl der Bewertungen in einer Zeile.",
+	"description": "Sterne und Anzahl der Bewertungen, klassisch in einer Zeile oder gestapelt mit Plattformen und Linktext.",
 	"keywords": [ "badge", "bewertungen", "google", "sterne" ],
 	"textdomain": "local-reviews",
 	"attributes": {
@@ -19,6 +19,9 @@
 		"link": { "type": "string", "default": "none", "enum": [ "none", "google", "custom" ] },
 		"url": { "type": "string", "default": "" },
 		"count": { "type": "string", "default": "", "enum": [ "", "google", "local" ] },
+		"variant": { "type": "string", "default": "", "enum": [ "", "classic", "stacked" ] },
+		"link_text": { "type": "string", "default": "Alle Bewertungen ansehen" },
+		"subline": { "type": "string", "default": "" },
 		"wrapper_class": { "type": "string", "default": "" }
 	},
 	"supports": {

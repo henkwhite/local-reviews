@@ -36,6 +36,7 @@ final class Settings {
 			'badge_count'     => 'google',  // google: Anzahl laut Google | local: sichtbare Bewertungen im Plugin.
 			'badge_logo'      => 'google',  // google: Schriftzug | none: kein Logo | image: Bild aus der Mediathek.
 			'badge_logo_id'   => 0,        // Anhang-ID bei badge_logo = image.
+			'badge_variant'   => 'classic', // classic: eine Zeile mit Logo | stacked: Sterne, Anzahl, Plattformen, Linktext rechts.
 			'show_source'     => 'foreign', // Plattform-Hinweis „via …“: off | foreign | all.
 			'source_position' => 'date', // date: hinter dem Datum | top: oben rechts neben dem Namen.
 			'stars_position'  => 'below', // below: unter dem Namen | right: rechts neben dem Namen.
@@ -193,6 +194,7 @@ final class Settings {
 			'badge_count'     => in_array( $input['badge_count'] ?? '', [ 'google', 'local' ], true ) ? $input['badge_count'] : 'google',
 			'badge_logo'      => in_array( $input['badge_logo'] ?? '', [ 'google', 'none', 'image' ], true ) ? $input['badge_logo'] : 'google',
 			'badge_logo_id'   => absint( $input['badge_logo_id'] ?? 0 ),
+			'badge_variant'   => in_array( $input['badge_variant'] ?? '', [ 'classic', 'stacked' ], true ) ? $input['badge_variant'] : 'classic',
 			'show_source'     => in_array( $input['show_source'] ?? '', [ 'off', 'foreign', 'all' ], true ) ? $input['show_source'] : 'foreign',
 			'source_position' => in_array( $input['source_position'] ?? '', [ 'date', 'top' ], true ) ? $input['source_position'] : 'date',
 			'stars_position'  => in_array( $input['stars_position'] ?? '', [ 'below', 'right' ], true ) ? $input['stars_position'] : 'below',

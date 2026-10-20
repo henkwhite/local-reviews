@@ -90,7 +90,9 @@
 								{ value: 'all', label: __( 'Bei allen Bewertungen', 'local-reviews' ) }
 							],
 							onChange: function ( value ) {
-								props.setAttributes( { show_source: value } ),
+								props.setAttributes( { show_source: value } );
+							}
+						} ),
 						el( components.SelectControl, {
 							label: __( 'Position des Plattform-Hinweises', 'local-reviews' ),
 							value: attrs.source_position,
@@ -100,7 +102,9 @@
 								{ value: 'top', label: __( 'Oben rechts neben dem Namen', 'local-reviews' ) }
 							],
 							onChange: function ( value ) {
-								props.setAttributes( { source_position: value } ),
+								props.setAttributes( { source_position: value } );
+							}
+						} ),
 						el( components.SelectControl, {
 							label: __( 'Sterne', 'local-reviews' ),
 							value: attrs.stars_position,
@@ -111,10 +115,6 @@
 							],
 							onChange: function ( value ) {
 								props.setAttributes( { stars_position: value } );
-							}
-						} );
-							}
-						} );
 							}
 						} )
 					),

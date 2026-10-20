@@ -202,6 +202,9 @@ final class Render {
 			'link'          => 'none', // none | google | custom.
 			'url'           => '',
 			'count'         => '',     // Leer: Einstellung | google | local.
+			'variant'       => '',     // Leer: Einstellung | classic | stacked.
+			'link_text'     => __( 'Alle Bewertungen ansehen', 'local-reviews' ), // Nur stacked: Text rechts, leer = ausblenden.
+			'subline'       => '',     // Nur stacked: Zeile unter der Anzahl, leer = Plattformen automatisch.
 			'wrapper_class' => '',
 		];
 	}
@@ -412,7 +415,7 @@ final class Render {
 	}
 
 	/**
-	 * Badge: „Google ★★★★★ 83 Bewertungen ›“.
+	 * Badge in der klassischen oder der gestapelten Variante.
 	 *
 	 * @param array<string, mixed> $args Attribute, siehe badge_defaults().
 	 */
@@ -421,7 +424,6 @@ final class Render {
 		self::enqueue_style();
 
 		$summary = Profile::summary();
-		$parts   = '';
 
 		// Anzahl laut Google oder die der sichtbaren Bewertungen im Plugin.
 		$mode = in_array( $args['count'], [ 'google', 'local' ], true ) ? $args['count'] : (string) Settings::get( 'badge_count' );
@@ -439,19 +441,11 @@ final class Render {
 			return self::is_editor_preview() ? '<p class="lr-notice">' . esc_html__( 'Badge: Noch keine Bewertungen. API-Key und Place ID unter Einstellungen > Local Reviews eintragen oder Bewertungen importieren.', 'local-reviews' ) . '</p>' : '';
 		}
 
-		$parts .= self::badge_logo( self::logo_mode( $args ) );
-		if ( self::bool( $args['rating'] ) && $summary['count'] > 0 ) {
-			$parts .= '<span class="lr-badge__rating">' . esc_html( number_format_i18n( $summary['rating'], 1 ) ) . '</span>';
-		}
-		$parts .= '<span class="lr-badge__stars lr-stars" role="img" aria-label="' . esc_attr( self::stars_label( $summary['rating'] ) ) . '">' . esc_html( self::stars( (int) round( $summary['rating'] ) ) ) . '</span>';
-		$label  = trim( number_format_i18n( $summary['count'] ) . ' ' . (string) $args['label'] );
-		$parts .= '<span class="lr-badge__text">' . esc_html( $label ) . '</span>';
-		if ( self::bool( $args['arrow'] ) ) {
-			$parts .= '<span class="lr-badge__arrow" aria-hidden="true">›</span>';
-		}
+		$variant = self::badge_variant( $args );
+		$classes = self::classes( 'lr-badge' . ( 'stacked' === $variant ? ' lr-badge--stacked' : '' ), (string) $args['wrapper_class'] );
+		$parts   = 'stacked' === $variant ? self::badge_stacked( $args, $summary ) : self::badge_classic( $args, $summary );
 
-		$classes = self::classes( 'lr-badge', (string) $args['wrapper_class'] );
-		$url     = '';
+		$url = '';
 		if ( 'google' === $args['link'] ) {
 			$url = Profile::reviews_url();
 		} elseif ( 'custom' === $args['link'] ) {
@@ -464,7 +458,113 @@ final class Render {
 			return '<a class="' . esc_attr( $classes ) . '" href="' . esc_url( $url ) . '"' . ( $external ? ' target="_blank" rel="noopener nofollow"' : '' ) . '>' . $parts . '</a>';
 		}
 		// Ohne Link ein <p> wie im alten Snippet, damit es in einem umgebenden Link (z. B. GB-Overlay) gleich aussieht.
-		return '<p class="' . esc_attr( $classes ) . '">' . $parts . '</p>';
+		// Die gestapelte Variante enthält nur <span>, ein <div> ist dort ebenso gültig wie im Link.
+		$tag = 'stacked' === $variant ? 'div' : 'p';
+		return '<' . $tag . ' class="' . esc_attr( $classes ) . '">' . $parts . '</' . $tag . '>';
+	}
+
+	/**
+	 * Welche Variante der Badge zeigt: Attribut variant, sonst die Einstellung.
+	 *
+	 * @param array<string, mixed> $args Attribute des Badges.
+	 */
+	private static function badge_variant( array $args ): string {
+		$variants = [ 'classic', 'stacked' ];
+		$value    = strtolower( trim( (string) $args['variant'] ) );
+		if ( in_array( $value, $variants, true ) ) {
+			return $value;
+		}
+		$setting = (string) Settings::get( 'badge_variant' );
+		return in_array( $setting, $variants, true ) ? $setting : 'classic';
+	}
+
+	/**
+	 * Inhalt der klassischen Variante: „Google ★★★★★ 83 Bewertungen ›“ in einer Zeile.
+	 *
+	 * @param array<string, mixed>             $args    Attribute des Badges.
+	 * @param array{rating: float, count: int} $summary Note und Anzahl.
+	 */
+	private static function badge_classic( array $args, array $summary ): string {
+		$parts = self::badge_logo( self::logo_mode( $args ) );
+		if ( self::bool( $args['rating'] ) ) {
+			$parts .= '<span class="lr-badge__rating">' . esc_html( number_format_i18n( $summary['rating'], 1 ) ) . '</span>';
+		}
+		$parts .= self::badge_stars( $summary['rating'] );
+		$label  = trim( number_format_i18n( $summary['count'] ) . ' ' . (string) $args['label'] );
+		$parts .= '<span class="lr-badge__text">' . esc_html( $label ) . '</span>';
+		if ( self::bool( $args['arrow'] ) ) {
+			$parts .= '<span class="lr-badge__arrow" aria-hidden="true">›</span>';
+		}
+		return $parts;
+	}
+
+	/**
+	 * Inhalt der gestapelten Variante:
+	 *
+	 *   ★★★★★
+	 *   86 Kundenbewertungen          |  Alle Bewertungen ansehen →
+	 *   u. a. auf Google, 11880 & GoLocal
+	 *
+	 * @param array<string, mixed>             $args    Attribute des Badges.
+	 * @param array{rating: float, count: int} $summary Note und Anzahl.
+	 */
+	private static function badge_stacked( array $args, array $summary ): string {
+		// Logo (falls gewählt), Note und Sterne in der ersten Zeile.
+		$top = self::badge_logo( self::logo_mode( $args ) );
+		if ( self::bool( $args['rating'] ) ) {
+			$top .= '<span class="lr-badge__rating">' . esc_html( number_format_i18n( $summary['rating'], 1 ) ) . '</span>';
+		}
+		$top .= self::badge_stars( $summary['rating'] );
+
+		$main    = '<span class="lr-badge__main">';
+		$main   .= '<span class="lr-badge__top">' . $top . '</span>';
+		$main   .= '<span class="lr-badge__count">' . esc_html( trim( number_format_i18n( $summary['count'] ) . ' ' . (string) $args['label'] ) ) . '</span>';
+		$subline = '' !== trim( (string) $args['subline'] ) ? trim( (string) $args['subline'] ) : self::platforms_line();
+		if ( '' !== $subline ) {
+			$main .= '<span class="lr-badge__sub">' . esc_html( $subline ) . '</span>';
+		}
+		$main .= '</span>';
+
+		// Linktext rechts, durch eine senkrechte Linie getrennt. Leerer Text blendet ihn aus.
+		$link_text = trim( (string) $args['link_text'] );
+		if ( '' !== $link_text ) {
+			$main .= '<span class="lr-badge__divider" aria-hidden="true"></span>';
+			$main .= '<span class="lr-badge__cta">' . esc_html( $link_text );
+			if ( self::bool( $args['arrow'] ) ) {
+				$main .= ' <span class="lr-badge__cta-arrow" aria-hidden="true">→</span>';
+			}
+			$main .= '</span>';
+		}
+		return $main;
+	}
+
+	/**
+	 * Zeile „u. a. auf Google, 11880 & GoLocal“ aus den sichtbaren Bewertungen.
+	 *
+	 * Höchstens drei Plattformen, die häufigste zuerst. Bei nur einer Plattform
+	 * „auf Google“, ohne Bewertungen im Plugin leer.
+	 */
+	private static function platforms_line(): string {
+		$names = array_slice( Profile::platforms(), 0, 3 );
+		if ( [] === $names ) {
+			return '';
+		}
+		if ( 1 === count( $names ) ) {
+			/* translators: %s: Name der Plattform, z. B. Google. */
+			return sprintf( __( 'auf %s', 'local-reviews' ), $names[0] );
+		}
+		$last = array_pop( $names );
+		/* translators: 1: Plattformen mit Komma, z. B. „Google, 11880“, 2: letzte Plattform. */
+		return sprintf( __( 'u. a. auf %1$s & %2$s', 'local-reviews' ), implode( ', ', $names ), $last );
+	}
+
+	/**
+	 * Sterne des Badges.
+	 *
+	 * @param float $rating Note.
+	 */
+	private static function badge_stars( float $rating ): string {
+		return '<span class="lr-badge__stars lr-stars" role="img" aria-label="' . esc_attr( self::stars_label( $rating ) ) . '">' . esc_html( self::stars( (int) round( $rating ) ) ) . '</span>';
 	}
 
 	/**

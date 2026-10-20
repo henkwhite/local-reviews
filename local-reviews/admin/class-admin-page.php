@@ -721,6 +721,16 @@ final class Admin_Page {
 					</td>
 				</tr>
 				<tr>
+					<th scope="row"><?php esc_html_e( 'Badge-Variante', 'local-reviews' ); ?></th>
+					<td>
+						<fieldset>
+							<label><input type="radio" name="local_reviews[badge_variant]" value="classic" <?php checked( $s['badge_variant'], 'classic' ); ?>> <?php esc_html_e( 'Klassisch: Logo, Sterne und Anzahl in einer Zeile', 'local-reviews' ); ?></label><br>
+							<label><input type="radio" name="local_reviews[badge_variant]" value="stacked" <?php checked( $s['badge_variant'], 'stacked' ); ?>> <?php esc_html_e( 'Gestapelt: Sterne, darunter Anzahl und Plattformen („u. a. auf Google, 11880 & GoLocal“), rechts „Alle Bewertungen ansehen →“', 'local-reviews' ); ?></label>
+						</fieldset>
+						<p class="description"><?php esc_html_e( 'Pro Badge überschreibbar (Block-Einstellung „Variante“ bzw. variant="classic|stacked"). Linktext und Plattform-Zeile im Block bzw. mit link_text="…" und subline="…". Die Plattform-Zeile nennt alle Plattformen im Plugin; passend dazu „Anzahl im Badge“ auf „Sichtbare Bewertungen im Plugin“ stellen.', 'local-reviews' ); ?></p>
+					</td>
+				</tr>
+				<tr>
 					<th scope="row"><?php esc_html_e( 'Logo im Badge', 'local-reviews' ); ?></th>
 					<td>
 						<?php $local_reviews_logo = $s['badge_logo_id'] ? wp_get_attachment_image_url( (int) $s['badge_logo_id'], 'medium' ) : ''; ?>

@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.4.2
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ Local Reviews holt täglich über die Places API (New) Note, Anzahl, Profilfoto 
 * Import des vollständigen Bestands aus Outscraper (JSON), Google Takeout (reviews.json) oder CSV, mit Vorschau und Dublettenerkennung
 * Bewertungen anderer Plattformen (11880, GoLocal, Facebook, ProvenExpert, MyHammer, Houzz, Trustpilot, Sonstige) per Formular oder CSV
 * Einträge ausblenden, manuelle und importierte bearbeiten oder löschen
-* Drei Blöcke und drei Shortcodes: Bewertungen mit Kopfbereich, Badge, Button zu Google
+* Drei Blöcke und drei Shortcodes: Bewertungen mit Kopfbereich, Badge (klassisch oder gestapelt), Button zu Google
 * Darstellung global einstellbar und pro Block/Shortcode überschreibbar
 * Seiten-Cache (WP Rocket, AccelerateWP, LiteSpeed, W3 Total Cache, WP Super Cache, WP Fastest Cache, Cache Enabler, SiteGround Optimizer, Breeze) wird nur bei echten Änderungen geleert
 * Updates direkt aus GitHub-Releases
@@ -60,6 +60,10 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.5.0 =
+* Neue Badge-Variante „gestapelt“: Sterne, darunter Anzahl und Plattformen („u. a. auf Google, 11880 & GoLocal“), rechts durch eine Linie getrennt „Alle Bewertungen ansehen →“. Mobil steht der Linktext darunter. Global unter Einstellungen › Badge-Variante, pro Block („Variante“) bzw. Shortcode (variant="classic|stacked") überschreibbar; Linktext und Plattform-Zeile mit link_text und subline änderbar.
+* Block „Bewertungen“: Die Auswahlfelder „Position des Plattform-Hinweises“ und „Sterne“ erscheinen jetzt in der Seitenleiste (fehlten wegen eines Fehlers im Editor-Skript).
 
 = 1.4.2 =
 * Nach jedem Plugin-Update werden einmalig Seiten-Cache und minifizierte CSS-/JS-Dateien geleert (WP Rocket/AccelerateWP, Autoptimize sowie die übrigen unterstützten Cache-Plugins). Sonst lieferte z. B. AccelerateWP nach einem Update noch die alte Optik an ausgeloggte Besucher.

@@ -73,6 +73,36 @@ final class Profile {
 	}
 
 	/**
+	 * Namen der Plattformen mit sichtbaren Bewertungen, die häufigste zuerst.
+	 *
+	 * Bei gleicher Anzahl steht Google vorn, danach alphabetisch (ohne Groß/Klein).
+	 * Einträge unter „Sonstige“ zählen nach ihrem eigenen Namen, ohne Namen gar nicht.
+	 *
+	 * @return list<string>
+	 */
+	public static function platforms(): array {
+		$counts = [];
+		foreach ( Store::query( [ 'limit' => 0 ] ) as $entry ) {
+			$own = (string) ( $entry['source_label'] ?? '' );
+			// „Sonstige“ ohne eigenen Namen ist keine Plattform, die man nennen kann.
+			if ( 'other' === $entry['source'] && '' === trim( $own ) ) {
+				continue;
+			}
+			$label            = Sources::label( (string) $entry['source'], $own );
+			$counts[ $label ] = ( $counts[ $label ] ?? 0 ) + 1;
+		}
+		$labels = array_map( 'strval', array_keys( $counts ) );
+		usort(
+			$labels,
+			static function ( string $a, string $b ) use ( $counts ): int {
+				$order = [ $counts[ $b ], 'Google' === $b ] <=> [ $counts[ $a ], 'Google' === $a ];
+				return 0 !== $order ? $order : strcasecmp( $a, $b );
+			}
+		);
+		return $labels;
+	}
+
+	/**
 	 * Angezeigter Firmenname: Einstellung, sonst Name aus dem Google-Profil.
 	 */
 	public static function company_name(): string {
