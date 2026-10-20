@@ -282,13 +282,17 @@ a.lr-source:focus {
  *   ★★★★★
  *   86 Kundenbewertungen        |  Alle Bewertungen ansehen →
  *   u. a. auf Google, 11880 & GoLocal
+ * Alle Größen in em, bezogen auf die Schriftgröße des Themes an dieser
+ * Stelle: Ändert sich die Grundschrift (z. B. mobil), skaliert der Badge
+ * im gleichen Verhältnis mit. Eigene Größe z. B. über
+ * .lr-badge--stacked { font-size: 18px; } oder eine CSS-Klasse am Block.
  * Schrift und Farben kommen vom Theme (GeneratePress: --contrast, --accent).
  * ------------------------------------------------------------------ */
 
 .lr-badge.lr-badge--stacked {
 	align-items: center;
 	flex-wrap: nowrap;
-	gap: 28px;
+	gap: 1.65em;
 	font-family: inherit;
 	color: var(--lr-badge-text, var(--contrast, #222));
 }
@@ -297,44 +301,47 @@ a.lr-source:focus {
 	opacity: 1;
 }
 
-/* Ohne Link ist der Badge ein <div>: Abstand nach unten wie bei einem Absatz (klassisch <p>). */
-div.lr-badge--stacked {
-	margin-bottom: 1.5em;
-}
-
 .lr-badge--stacked .lr-badge__main {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 0.25em;
 	min-width: 0;
 }
 
 .lr-badge--stacked .lr-badge__top {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 0.5em;
+}
+
+.lr-badge--stacked .lr-badge__brand {
+	font-size: 1.15em;
+}
+
+.lr-badge--stacked .lr-badge__logo {
+	height: 1.15em;
 }
 
 .lr-badge--stacked .lr-badge__stars {
-	font-size: 26px;
-	letter-spacing: 2px;
+	font-size: 1.5em;
+	letter-spacing: 0.08em;
 }
 
 .lr-badge--stacked .lr-badge__rating {
-	font-size: 18px;
+	font-size: 1.05em;
 	margin-left: 0;
 	color: inherit;
 }
 
 .lr-badge--stacked .lr-badge__count {
-	font-size: 26px;
+	font-size: 1.3em;
 	font-weight: 600;
 	line-height: 1.15;
 	color: inherit;
 }
 
 .lr-badge--stacked .lr-badge__sub {
-	font-size: 15px;
+	font-size: 0.7em;
 	line-height: 1.3;
 	color: var(--lr-badge-muted, #6b6b6b);
 }
@@ -347,7 +354,7 @@ div.lr-badge--stacked {
 
 /* Kein nowrap: In schmalen Spalten bricht der Linktext um, statt überzulaufen. */
 .lr-badge--stacked .lr-badge__cta {
-	font-size: 16px;
+	font-size: 0.95em;
 	font-weight: 600;
 	color: var(--lr-badge-link, var(--accent, #1e8fa3));
 }
@@ -357,21 +364,18 @@ div.lr-badge--stacked {
 	text-decoration: underline;
 }
 
-/* Smartphone: Linktext unter den Block, Trennlinie waagerecht. */
+/* Smartphone: Linktext unter den Block, Trennlinie waagerecht.
+ * Der Umbruchpunkt bleibt in px, weil er sich auf die Bildschirmbreite bezieht. */
 @media (max-width: 480px) {
 	.lr-badge.lr-badge--stacked {
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 12px;
+		gap: 0.7em;
 	}
 
 	.lr-badge--stacked .lr-badge__divider {
 		width: 100%;
 		height: 1px;
-	}
-
-	.lr-badge--stacked .lr-badge__count {
-		font-size: 22px;
 	}
 }
 

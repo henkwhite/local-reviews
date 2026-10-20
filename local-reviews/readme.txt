@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.5.1 =
+* Gestapelter Badge: alle Größen in em, bezogen auf die Schriftgröße des Themes, und skaliert dadurch im gleichen Verhältnis mit. Anzahl 1,3 em, Plattform-Zeile 0,7 em (bei 17 px Grundschrift knapp 12 px). Kein Abstand mehr unter dem Badge.
 
 = 1.5.0 =
 * Neue Badge-Variante „gestapelt“: Sterne, darunter Anzahl und Plattformen („u. a. auf Google, 11880 & GoLocal“), rechts durch eine Linie getrennt „Alle Bewertungen ansehen →“. Mobil steht der Linktext darunter. Global unter Einstellungen › Badge-Variante, pro Block („Variante“) bzw. Shortcode (variant="classic|stacked") überschreibbar; Linktext und Plattform-Zeile mit link_text und subline änderbar.
