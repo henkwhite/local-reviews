@@ -893,6 +893,30 @@ $before = Cache::snapshot();
 Profile::update( [ 'name' => 'Neuer Name' ] );
 ok( $before !== Cache::snapshot(), 'Profilname zählt zum Cache-Fingerabdruck' );
 
+// 1.2.0: Anzahl im Badge lokal oder laut Google, „via Google“ mit Link.
+reset_state();
+Profile::update( [ 'rating' => 5.0, 'count' => 83, 'name' => 'Testfirma GmbH' ] );
+seed(
+	[
+		entry( 'b1', [ 'name' => 'Anna', 'rating' => 5, 'text' => 'Toll', 'url' => 'https://www.google.com/maps/reviews/data=abc', 'timestamp' => $d( '2024-05-01' ) ] ),
+		entry( 'b2', [ 'name' => 'Bert', 'rating' => 4, 'text' => 'Gut', 'timestamp' => $d( '2024-04-01' ) ] ),
+		entry( 'b3', [ 'source' => '11880', 'name' => 'Cleo', 'rating' => 5, 'text' => 'Prima', 'timestamp' => $d( '2024-03-01' ) ] ),
+		entry( 'b4', [ 'name' => 'Dora', 'rating' => 5, 'text' => 'Versteckt', 'hidden' => true, 'timestamp' => $d( '2024-02-01' ) ] ),
+	]
+);
+ok( str_contains( do_shortcode( '[google_badge_einzeln]' ), '83 Bewertungen' ), 'Badge Standard: Anzahl laut Google' );
+Settings::update( [ 'badge_count' => 'local' ] );
+ok( str_contains( do_shortcode( '[google_badge_einzeln]' ), '3 Bewertungen' ), 'Badge Einstellung local: sichtbare Bewertungen aller Plattformen, ohne ausgeblendete' );
+ok( str_contains( do_shortcode( '[google_badge_einzeln count="google"]' ), '83 Bewertungen' ), 'Shortcode count="google" überschreibt Einstellung' );
+Settings::update( [ 'badge_count' => 'google' ] );
+ok( str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge {"count":"local"} /-->' )[0] ), '3 Bewertungen' ), 'Block-Attribut count=local' );
+Settings::update( [ 'badge_count' => 'quatsch' ] );
+ok( 'google' === Settings::get( 'badge_count' ), 'ungültiger Wert für badge_count wird google' );
+$html = do_shortcode( '[google_reviews_lokal show_source="all" header="0"]' );
+ok( str_contains( $html, '<a class="lr-source lr-source--google" href="https://www.google.com/maps/reviews/data=abc" target="_blank" rel="noopener nofollow">via Google</a>' ), 'show_source=all: „via Google“ als Link zur Original-Bewertung' );
+ok( str_contains( $html, '<span class="lr-source lr-source--google">via Google</span>' ), 'show_source=all: ohne Link als Text' );
+ok( ! str_contains( do_shortcode( '[google_reviews_lokal header="0"]' ), 'via Google' ), 'Standard foreign: kein „via Google“' );
+
 section( '7. Plattformen' );
 remove_all_filters( 'local_reviews_sources' );
 $s = Sources::all();

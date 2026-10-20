@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "local-reviews/badge",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"title": "Bewertungs-Badge (Local Reviews)",
 	"category": "widgets",
 	"icon": "awards",
@@ -17,6 +17,7 @@
 		"arrow": { "type": "boolean", "default": true },
 		"link": { "type": "string", "default": "none", "enum": [ "none", "google", "custom" ] },
 		"url": { "type": "string", "default": "" },
+		"count": { "type": "string", "default": "", "enum": [ "", "google", "local" ] },
 		"wrapper_class": { "type": "string", "default": "" }
 	},
 	"supports": {

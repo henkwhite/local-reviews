@@ -57,7 +57,7 @@ $local_reviews_reviews_url  = LocalReviews\Admin_Page::url( [ 'tab' => 'reviews'
 			<tr><td><code>hide_empty</code></td><td>0</td><td>Bewertungen ohne Text ausblenden</td></tr>
 			<tr><td><code>excerpt</code></td><td>0</td><td>Text auf so viele Zeichen kürzen, 0 = ungekürzt</td></tr>
 			<tr><td><code>source</code></td><td>(leer)</td><td>Nur bestimmte Plattformen, z. B. <code>google,11880</code></td></tr>
-			<tr><td><code>show_source</code></td><td>foreign</td><td>Plattform-Hinweis „via …“: <code>off</code>, <code>foreign</code> (nur andere als Google), <code>all</code></td></tr>
+			<tr><td><code>show_source</code></td><td>foreign</td><td>Plattform-Hinweis „via …“: <code>off</code>, <code>foreign</code> (nur andere als Google), <code>all</code> (auch „via Google“). Ist ein Link zur Original-Bewertung hinterlegt, ist der Hinweis anklickbar</td></tr>
 			<tr><td><code>wrapper_class</code></td><td>(leer)</td><td>Eigene CSS-Klassen am äußeren Element</td></tr>
 		</tbody>
 	</table>
@@ -73,6 +73,7 @@ $local_reviews_reviews_url  = LocalReviews\Admin_Page::url( [ 'tab' => 'reviews'
 			<tr><td><code>arrow</code></td><td>1</td><td>Pfeil „›“ am Ende</td></tr>
 			<tr><td><code>link</code></td><td>none</td><td><code>none</code>, <code>google</code> (Bewertungsliste) oder <code>custom</code> mit <code>url</code></td></tr>
 			<tr><td><code>url</code></td><td>(leer)</td><td>Ziel bei <code>link="custom"</code>, z. B. <code>#bewertungen</code></td></tr>
+			<tr><td><code>count</code></td><td>(Einstellung)</td><td><code>google</code> (Anzahl laut Google) oder <code>local</code> (sichtbare Bewertungen im Plugin, alle Plattformen). Standard aus Einstellungen › Anzahl im Badge</td></tr>
 			<tr><td><code>wrapper_class</code></td><td>(leer)</td><td>Eigene CSS-Klassen</td></tr>
 		</tbody>
 	</table>

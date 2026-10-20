@@ -57,6 +57,22 @@ final class Profile {
 	}
 
 	/**
+	 * Anzahl und Durchschnitt der sichtbaren Bewertungen im Plugin (alle Plattformen,
+	 * ohne ausgeblendete).
+	 *
+	 * @return array{rating: float, count: int}
+	 */
+	public static function local_summary(): array {
+		$visible = Store::query( [ 'limit' => 0 ] );
+		$count   = count( $visible );
+		$sum     = array_sum( array_column( $visible, 'rating' ) );
+		return [
+			'rating' => $count > 0 ? round( $sum / $count, 1 ) : 0.0,
+			'count'  => $count,
+		];
+	}
+
+	/**
 	 * Angezeigter Firmenname: Einstellung, sonst Name aus dem Google-Profil.
 	 */
 	public static function company_name(): string {

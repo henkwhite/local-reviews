@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,10 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.2.0 =
+* Neue Einstellung „Anzahl im Badge“: Anzahl laut Google oder die sichtbaren Bewertungen im Plugin (alle Plattformen, ohne ausgeblendete). Pro Badge überschreibbar (Block bzw. Shortcode-Attribut count).
+* Anleitung: show_source="all" zeigt „via Google“ mit Link zur Original-Bewertung.
 
 = 1.1.0 =
 * Seiten-Cache wird zusätzlich für W3 Total Cache, WP Super Cache, WP Fastest Cache, Cache Enabler, SiteGround Optimizer und Breeze geleert. Ein Fehler bei einem Cache-Plugin hält die anderen nicht mehr auf.

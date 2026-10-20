@@ -37,6 +37,18 @@
 						toggleControl( props, 'brand', __( 'Google-Schriftzug', 'local-reviews' ) ),
 						toggleControl( props, 'rating', __( 'Note als Zahl', 'local-reviews' ) ),
 						toggleControl( props, 'arrow', __( 'Pfeil am Ende', 'local-reviews' ) ),
+						el( components.SelectControl, {
+							label: __( 'Anzahl', 'local-reviews' ),
+							value: attrs.count,
+							options: [
+								{ value: '', label: __( 'Wie in den Einstellungen', 'local-reviews' ) },
+								{ value: 'google', label: __( 'Anzahl laut Google', 'local-reviews' ) },
+								{ value: 'local', label: __( 'Bewertungen im Plugin', 'local-reviews' ) }
+							],
+							onChange: function ( value ) {
+								props.setAttributes( { count: value } );
+							}
+						} ),
 						el( components.TextControl, {
 							label: __( 'Text hinter der Anzahl', 'local-reviews' ),
 							value: attrs.label,

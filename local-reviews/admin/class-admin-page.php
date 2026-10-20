@@ -711,6 +711,26 @@ final class Admin_Page {
 					</td>
 				</tr>
 				<tr>
+					<th scope="row"><?php esc_html_e( 'Anzahl im Badge', 'local-reviews' ); ?></th>
+					<td>
+						<fieldset>
+							<label><input type="radio" name="local_reviews[badge_count]" value="google" <?php checked( $s['badge_count'], 'google' ); ?>> <?php esc_html_e( 'Anzahl laut Google', 'local-reviews' ); ?></label><br>
+							<label><input type="radio" name="local_reviews[badge_count]" value="local" <?php checked( $s['badge_count'], 'local' ); ?>> <?php esc_html_e( 'Sichtbare Bewertungen im Plugin (alle Plattformen, ohne ausgeblendete)', 'local-reviews' ); ?></label>
+						</fieldset>
+						<p class="description">
+							<?php
+							$local_reviews_local = Profile::local_summary();
+							printf(
+								/* translators: 1: Anzahl laut Google, 2: Anzahl im Plugin. */
+								esc_html__( 'Aktuell: %1$d laut Google, %2$d im Plugin. Die Sterne folgen der Google-Note. Pro Badge überschreibbar (Block-Einstellung bzw. count="google|local").', 'local-reviews' ),
+								(int) Profile::get()['count'],
+								(int) $local_reviews_local['count']
+							);
+							?>
+						</p>
+					</td>
+				</tr>
+				<tr>
 					<th scope="row"><?php esc_html_e( 'Plugin-CSS', 'local-reviews' ); ?></th>
 					<td>
 						<label><input type="checkbox" name="local_reviews[load_css]" value="1" <?php checked( (bool) $s['load_css'] ); ?>> <?php esc_html_e( 'Mitgeliefertes CSS laden', 'local-reviews' ); ?></label>

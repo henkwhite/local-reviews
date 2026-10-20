@@ -180,6 +180,7 @@ final class Render {
 			'arrow'         => true,
 			'link'          => 'none', // none | google | custom.
 			'url'           => '',
+			'count'         => '',     // Leer: Einstellung | google | local.
 			'wrapper_class' => '',
 		];
 	}
@@ -363,9 +364,20 @@ final class Render {
 		$summary = Profile::summary();
 		$parts   = '';
 
-		// Ohne Daten von Google nichts ausgeben, statt „☆☆☆☆☆ 0 Bewertungen“.
+		// Anzahl laut Google oder die der sichtbaren Bewertungen im Plugin.
+		$mode = in_array( $args['count'], [ 'google', 'local' ], true ) ? $args['count'] : (string) Settings::get( 'badge_count' );
+		if ( 'local' === $mode ) {
+			$local            = Profile::local_summary();
+			$summary['count'] = $local['count'];
+			// Sterne weiter nach Google-Note; ohne Google-Daten der Schnitt im Plugin.
+			if ( $summary['rating'] <= 0 ) {
+				$summary['rating'] = $local['rating'];
+			}
+		}
+
+		// Ohne Daten nichts ausgeben, statt „☆☆☆☆☆ 0 Bewertungen“.
 		if ( $summary['count'] <= 0 ) {
-			return self::is_editor_preview() ? '<p class="lr-notice">' . esc_html__( 'Badge: Noch keine Daten von Google. API-Key und Place ID unter Einstellungen > Local Reviews eintragen.', 'local-reviews' ) . '</p>' : '';
+			return self::is_editor_preview() ? '<p class="lr-notice">' . esc_html__( 'Badge: Noch keine Bewertungen. API-Key und Place ID unter Einstellungen > Local Reviews eintragen oder Bewertungen importieren.', 'local-reviews' ) . '</p>' : '';
 		}
 
 		if ( self::bool( $args['brand'] ) ) {

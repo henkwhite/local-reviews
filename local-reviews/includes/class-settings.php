@@ -33,6 +33,7 @@ final class Settings {
 			'button_mode'  => 'auto',    // auto | custom.
 			'button_url'   => '',        // Eigene URL zur Bewertungsliste.
 			'write_url'    => '',        // Eigene URL „Bewertung schreiben“, leer: automatisch.
+			'badge_count'  => 'google',  // google: Anzahl laut Google | local: sichtbare Bewertungen im Plugin.
 		];
 	}
 
@@ -184,6 +185,7 @@ final class Settings {
 			'button_mode'  => $button_mode,
 			'button_url'   => esc_url_raw( (string) ( $input['button_url'] ?? '' ), [ 'http', 'https' ] ),
 			'write_url'    => esc_url_raw( (string) ( $input['write_url'] ?? '' ), [ 'http', 'https' ] ),
+			'badge_count'  => in_array( $input['badge_count'] ?? '', [ 'google', 'local' ], true ) ? $input['badge_count'] : 'google',
 		];
 	}
 }
