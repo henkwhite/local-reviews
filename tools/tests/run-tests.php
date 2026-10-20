@@ -786,7 +786,7 @@ ok( ! str_contains( $h, 'lr-source' ), 'show_source="off": keine Labels' );
 $h = do_shortcode( '[google_reviews_lokal hide_empty="1"]' );
 ok( 4 === substr_count( $h, 'class="lr-card"' ) && ! str_contains( $h, 'Wolf' ), 'hide_empty="1" blendet leere Texte aus' );
 $h = do_shortcode( '[google_reviews_lokal excerpt="50"]' );
-ok( str_contains( $h, 'Dies ist ein sehr langer Bewertungstext, der für…' ) && ! str_contains( $h, 'fünfzig Zeichen' ), 'excerpt="50" kürzt an Wortgrenze mit …', preg_match( '#Dies ist[^<]*#u', $h, $mm ) ? $mm[0] : '' );
+ok( str_contains( $h, '<span class="lr-card__short">Dies ist ein sehr langer Bewertungstext, der für…</span>' ) && 1 === preg_match( '#<span class="lr-card__full" hidden>[^<]*fünfzig Zeichen#u', $h ), 'excerpt="50" kürzt an Wortgrenze mit …, voller Text nur versteckt', preg_match( '#Dies ist[^<]*#u', $h, $mm ) ? $mm[0] : '' );
 $h = do_shortcode( '[google_reviews_lokal wrapper_class="a b"]' );
 ok( str_starts_with( $h, '<div class="lr-reviews a b"' ), 'wrapper_class="a b"' );
 $h = do_shortcode( '[google_reviews_lokal wrapper_class="x&quot; onclick=&quot;alert(1)"]' );
@@ -989,6 +989,19 @@ ok( 1 === preg_match( '#<div class="lr-card__aside"><div class="lr-card__stars[^
 ok( ! str_contains( do_shortcode( '[google_reviews_lokal header="0" stars_position="below"]' ), 'lr-card__head' ), 'stars_position="below" überschreibt Einstellung' );
 Settings::update( [ 'stars_position' => 'quatsch', 'show_source' => 'foreign' ] );
 ok( 'below' === Settings::get( 'stars_position' ), 'ungültige Sterne-Position wird below' );
+
+// 1.4.1: „Weiterlesen“ bei gekürzten Texten.
+seed( [ entry( 'm1', [ 'name' => 'Mia Mehr', 'rating' => 5, 'text' => "Erster Satz ist ziemlich lang und geht noch weiter.\nZweite Zeile mit <b>Tag</b> am Ende.", 'timestamp' => $d( '2024-05-01' ) ] ), entry( 'm2', [ 'name' => 'Kurt Kurz', 'rating' => 5, 'text' => 'Kurz.', 'timestamp' => $d( '2024-04-01' ) ] ) ] );
+wp_dequeue_script( LocalReviews\Render::SCRIPT );
+$html = do_shortcode( '[google_reviews_lokal header="0" excerpt="20"]' );
+ok( str_contains( $html, '<span class="lr-card__short">' ) && str_contains( $html, '<span class="lr-card__full" hidden>' ), 'gekürzt: Kurzfassung sichtbar, voller Text versteckt' );
+ok( str_contains( $html, '<button type="button" class="lr-card__more" hidden aria-expanded="false" data-less="Weniger anzeigen">Weiterlesen</button>' ), 'Schalter „Weiterlesen“ (ohne JS versteckt)' );
+ok( str_contains( $html, 'Zweite Zeile mit &lt;b&gt;Tag&lt;/b&gt; am Ende.' ) && ! str_contains( $html, '<b>Tag</b>' ), 'voller Text escaped' );
+ok( 1 === substr_count( $html, 'lr-card__more' ), 'kurzer Text ohne Schalter' );
+ok( wp_script_is( LocalReviews\Render::SCRIPT, 'enqueued' ), 'Skript wird bei gekürztem Text geladen' );
+wp_dequeue_script( LocalReviews\Render::SCRIPT );
+do_shortcode( '[google_reviews_lokal header="0"]' );
+ok( ! wp_script_is( LocalReviews\Render::SCRIPT, 'enqueued' ), 'ohne Kürzung kein Skript' );
 
 section( '7. Plattformen' );
 remove_all_filters( 'local_reviews_sources' );

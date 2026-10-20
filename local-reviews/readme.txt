@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.4.1 =
+* Gekürzte Bewertungstexte (excerpt) haben jetzt „Weiterlesen“: Der volle Text klappt in der Karte auf, „Weniger anzeigen“ klappt ihn wieder zu. Das kleine Skript wird nur geladen, wenn ein Text gekürzt ist.
 
 = 1.4.0 =
 * Neue Einstellung „Sterne in den Karten“: unter dem Namen oder rechts neben dem Namen, auch mobil in einer Zeile. Pro Block bzw. mit stars_position überschreibbar.

@@ -55,7 +55,7 @@ $local_reviews_reviews_url  = LocalReviews\Admin_Page::url( [ 'tab' => 'reviews'
 			<tr><td><code>card_width</code></td><td>400</td><td>Maximale Kartenbreite in Pixeln, 0 = volle Spaltenbreite</td></tr>
 			<tr><td><code>min_rating</code></td><td>0</td><td>Nur Bewertungen ab so vielen Sternen</td></tr>
 			<tr><td><code>hide_empty</code></td><td>0</td><td>Bewertungen ohne Text ausblenden</td></tr>
-			<tr><td><code>excerpt</code></td><td>0</td><td>Text auf so viele Zeichen kürzen, 0 = ungekürzt</td></tr>
+			<tr><td><code>excerpt</code></td><td>0</td><td>Text auf so viele Zeichen kürzen, 0 = ungekürzt. Gekürzte Texte bekommen „Weiterlesen“ zum Aufklappen</td></tr>
 			<tr><td><code>source</code></td><td>(leer)</td><td>Nur bestimmte Plattformen, z. B. <code>google,11880</code></td></tr>
 			<tr><td><code>show_source</code></td><td>(Einstellung)</td><td>Plattform-Hinweis „via …“: <code>off</code>, <code>foreign</code> (nur andere als Google), <code>all</code> (auch „via Google“). Standard aus Einstellungen › Plattform-Hinweis. Ist ein Link zur Original-Bewertung hinterlegt, ist der Hinweis anklickbar; Google-Bewertungen ohne Direktlink verlinken auf die Bewertungsliste</td></tr>
 			<tr><td><code>stars_position</code></td><td>(Einstellung)</td><td>Sterne <code>below</code> (unter dem Namen) oder <code>right</code> (rechts neben dem Namen, auch mobil)</td></tr>
