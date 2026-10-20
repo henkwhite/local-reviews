@@ -1,0 +1,100 @@
+/**
+ * Editor-Seite des Blocks „Bewertungs-Badge“. Die Ausgabe kommt vom Server.
+ */
+( function ( blocks, element, blockEditor, components, serverSideRender, i18n ) {
+	var el = element.createElement;
+	var __ = i18n.__;
+
+	/**
+	 * Schalter für ein boolesches Attribut.
+	 */
+	function toggleControl( props, key, label ) {
+		return el( components.ToggleControl, {
+			label: label,
+			checked: !! props.attributes[ key ],
+			onChange: function ( value ) {
+				var update = {};
+				update[ key ] = value;
+				props.setAttributes( update );
+			}
+		} );
+	}
+
+	blocks.registerBlockType( 'local-reviews/badge', {
+		edit: function ( props ) {
+			var blockProps = blockEditor.useBlockProps();
+			var attrs = props.attributes;
+
+			return el(
+				element.Fragment,
+				null,
+				el(
+					blockEditor.InspectorControls,
+					null,
+					el(
+						components.PanelBody,
+						{ title: __( 'Inhalt', 'local-reviews' ) },
+						toggleControl( props, 'brand', __( 'Google-Schriftzug', 'local-reviews' ) ),
+						toggleControl( props, 'rating', __( 'Note als Zahl', 'local-reviews' ) ),
+						toggleControl( props, 'arrow', __( 'Pfeil am Ende', 'local-reviews' ) ),
+						el( components.TextControl, {
+							label: __( 'Text hinter der Anzahl', 'local-reviews' ),
+							value: attrs.label,
+							onChange: function ( value ) {
+								props.setAttributes( { label: value } );
+							}
+						} )
+					),
+					el(
+						components.PanelBody,
+						{ title: __( 'Link', 'local-reviews' ) },
+						el( components.SelectControl, {
+							label: __( 'Ziel', 'local-reviews' ),
+							help: __( 'Für ein Modal mit GenerateBlocks Pro: „Kein Link“ wählen und den Badge in das Element legen, das das Overlay öffnet. Siehe Einstellungen > Local Reviews > Anleitung.', 'local-reviews' ),
+							value: attrs.link,
+							options: [
+								{ value: 'none', label: __( 'Kein Link', 'local-reviews' ) },
+								{ value: 'google', label: __( 'Bewertungen bei Google', 'local-reviews' ) },
+								{ value: 'custom', label: __( 'Eigene URL oder Anker', 'local-reviews' ) }
+							],
+							onChange: function ( value ) {
+								props.setAttributes( { link: value } );
+							}
+						} ),
+						'custom' === attrs.link && el( components.TextControl, {
+							label: __( 'URL oder Anker', 'local-reviews' ),
+							help: __( 'z. B. #bewertungen oder https://…', 'local-reviews' ),
+							value: attrs.url,
+							onChange: function ( value ) {
+								props.setAttributes( { url: value } );
+							}
+						} )
+					),
+					el(
+						components.PanelBody,
+						{ title: __( 'Erweitert', 'local-reviews' ), initialOpen: false },
+						el( components.TextControl, {
+							label: __( 'Eigene CSS-Klassen', 'local-reviews' ),
+							value: attrs.wrapper_class,
+							onChange: function ( value ) {
+								props.setAttributes( { wrapper_class: value } );
+							}
+						} )
+					)
+				),
+				el(
+					'div',
+					blockProps,
+					el( serverSideRender, {
+						block: 'local-reviews/badge',
+						attributes: attrs,
+						skipBlockSupportAttributes: true
+					} )
+				)
+			);
+		},
+		save: function () {
+			return null;
+		}
+	} );
+} )( window.wp.blocks, window.wp.element, window.wp.blockEditor, window.wp.components, window.wp.serverSideRender, window.wp.i18n );

@@ -1,0 +1,16 @@
+includes:
+	- tools/qa/vendor/szepeviktor/phpstan-wordpress/extension.neon
+parameters:
+	level: 6
+	phpVersion: 80100
+	paths:
+		- local-reviews
+	excludePaths:
+		- local-reviews/vendor
+	scanDirectories:
+		- local-reviews/vendor/yahnis-elsts
+	scanFiles:
+		- tools/qa/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+	bootstrapFiles:
+		- tools/qa/phpstan-bootstrap.php
+	treatPhpDocTypesAsCertain: false

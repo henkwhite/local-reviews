@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "local-reviews/button",
+	"version": "1.0.0",
+	"title": "Bewertungs-Button (Local Reviews)",
+	"category": "widgets",
+	"icon": "external",
+	"description": "Button zur Bewertungsliste oder zum Bewertungsformular bei Google.",
+	"keywords": [ "button", "bewertungen", "google", "link" ],
+	"textdomain": "local-reviews",
+	"attributes": {
+		"anchor": { "type": "string", "default": "" },
+		"text": { "type": "string", "default": "Alle Bewertungen auf Google lesen" },
+		"target": { "type": "string", "default": "reviews", "enum": [ "reviews", "write" ] },
+		"icon": { "type": "boolean", "default": true },
+		"align": { "type": "string", "default": "center", "enum": [ "left", "center", "right" ] },
+		"button_style": { "type": "string", "default": "google", "enum": [ "google", "theme", "none" ] },
+		"button_class": { "type": "string", "default": "" },
+		"wrapper_class": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"spacing": { "margin": true, "padding": true }
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "local-reviews-frontend",
+	"render": "file:./render.php"
+}

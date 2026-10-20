@@ -1,0 +1,113 @@
+/**
+ * Local Reviews – Backend-Seite.
+ */
+
+.local-reviews-tab {
+	margin-top: 20px;
+}
+
+.local-reviews-status {
+	max-width: 900px;
+}
+
+.local-reviews-status th {
+	width: 260px;
+}
+
+.local-reviews-thumb {
+	width: 60px;
+	height: 60px;
+	object-fit: cover;
+	border-radius: 4px;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.local-reviews-thumb[hidden] {
+	display: none;
+}
+
+.local-reviews-alert {
+	color: #b32d2e;
+}
+
+.local-reviews-actions {
+	display: flex;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.local-reviews-media {
+	margin-top: 8px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.local-reviews-form-box {
+	max-width: 900px;
+	margin-bottom: 24px;
+	padding: 0 16px 16px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+}
+
+.local-reviews-form-box summary {
+	cursor: pointer;
+}
+
+.local-reviews-form-box summary h2 {
+	display: inline-block;
+	margin: 12px 0;
+}
+
+.local-reviews-filter {
+	margin: 12px 0;
+}
+
+.local-reviews-table td {
+	vertical-align: top;
+}
+
+.local-reviews-table .local-reviews-text {
+	max-width: 420px;
+}
+
+.local-reviews-hidden td {
+	opacity: 0.55;
+}
+
+.local-reviews-row-actions form {
+	display: inline-block;
+	margin: 0 4px 4px 0;
+}
+
+.local-reviews-row-actions .button {
+	margin: 0 4px 4px 0;
+}
+
+.local-reviews-status-possible td {
+	background: #fff8e5;
+}
+
+.local-reviews-status-invalid td,
+.local-reviews-status-repeat td,
+.local-reviews-status-existing td {
+	color: #646970;
+}
+
+.local-reviews-guide {
+	max-width: 900px;
+}
+
+.local-reviews-guide h2 {
+	margin-top: 2em;
+}
+
+.local-reviews-guide code {
+	white-space: pre-wrap;
+}
+
+.local-reviews-guide table {
+	max-width: 900px;
+}

@@ -1,0 +1,22 @@
+# Kundendaten und Arbeitsnotizen, nie ins öffentliche Repo
+handoff-*.md
+spezifikation-*.md
+snippets/
+*.json.local
+live-optionen.json
+alte-bewertungen.json
+
+# Laufzeit-Abhängigkeiten werden beim Release gebaut
+local-reviews/vendor/
+tools/qa/vendor/
+
+# Build
+build/
+*.zip
+
+# macOS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+dist/

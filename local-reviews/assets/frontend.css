@@ -1,0 +1,261 @@
+/**
+ * Local Reviews – Frontend.
+ *
+ * Werte entsprechen 1:1 den alten Fluent-Snippets (Stand live Oktober 2026).
+ * Anpassen über die CSS-Variablen --lr-* oder eigene Regeln auf die Klassen lr-*.
+ */
+
+:root {
+	--lr-star-color: #fbbc05;
+	--lr-font: -apple-system, sans-serif;
+}
+
+/* ------------------------------------------------------------------
+ * Kopfbereich
+ * ------------------------------------------------------------------ */
+
+.lr-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-bottom: 15px;
+	margin-bottom: 20px;
+	font-family: var(--lr-font);
+}
+
+.lr-header__photo {
+	display: block;
+	flex-shrink: 0;
+	width: 75px;
+	height: 75px;
+	border-radius: 4px;
+	object-fit: cover;
+	background: #eee;
+}
+
+.lr-header__info {
+	display: flex;
+	flex-direction: column;
+}
+
+.lr-header__name {
+	font-weight: bold;
+	color: #202124;
+	font-size: 15px;
+	line-height: 1.3;
+}
+
+.lr-header__stars {
+	color: var(--lr-star-color);
+	font-size: 18px;
+	line-height: 1;
+	margin: 2px 0;
+}
+
+.lr-header__meta {
+	font-size: 13px;
+	color: #70757a;
+}
+
+/* ------------------------------------------------------------------
+ * Grid und Karten
+ * ------------------------------------------------------------------ */
+
+.lr-reviews__grid {
+	display: grid;
+	grid-template-columns: repeat(var(--lr-columns, 1), minmax(0, 1fr));
+	gap: 20px;
+	margin: 20px 0;
+	font-family: var(--lr-font);
+}
+
+@media (max-width: 1024px) {
+	.lr-reviews__grid {
+		grid-template-columns: repeat(var(--lr-columns-tablet, var(--lr-columns, 1)), minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767px) {
+	.lr-reviews__grid {
+		grid-template-columns: repeat(var(--lr-columns-mobile, 1), minmax(0, 1fr));
+	}
+}
+
+.lr-card {
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	position: relative;
+	max-width: var(--lr-card-width, 400px);
+	box-sizing: border-box;
+}
+
+.lr-card__name {
+	font-weight: bold;
+	color: #333;
+	font-size: 16px;
+	display: block;
+	padding-right: 25px;
+}
+
+.lr-card__stars {
+	color: var(--lr-star-color);
+	font-size: 18px;
+	margin-top: 5px;
+}
+
+.lr-card__text {
+	color: #555;
+	font-size: 14px;
+	line-height: 1.5;
+	margin: 10px 0 0 0;
+}
+
+.lr-card__date {
+	font-size: 12px;
+	color: #999;
+	margin-top: 15px;
+	display: block;
+}
+
+.lr-source {
+	display: block;
+	font-size: 12px;
+	color: #999;
+	margin-top: 4px;
+	text-decoration: none;
+}
+
+a.lr-source:hover,
+a.lr-source:focus {
+	text-decoration: underline;
+}
+
+.lr-reviews__empty {
+	font-family: var(--lr-font);
+}
+
+/* ------------------------------------------------------------------
+ * Badge
+ * ------------------------------------------------------------------ */
+
+.lr-badge {
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	text-decoration: none !important;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	transition: opacity 0.2s;
+	cursor: pointer;
+}
+
+.lr-badge:hover {
+	opacity: 0.8;
+}
+
+.lr-badge__brand {
+	font-size: 20px;
+	font-weight: bold;
+	font-family: "Product Sans", Arial, sans-serif;
+	letter-spacing: -0.3px;
+	line-height: 1;
+}
+
+.lr-g-blue { color: #4285f4; }
+.lr-g-red { color: #ea4335; }
+.lr-g-yellow { color: #fbbc05; }
+.lr-g-green { color: #34a853; }
+
+.lr-badge__stars {
+	color: var(--lr-star-color);
+	font-size: 20px;
+	letter-spacing: 1px;
+	line-height: 1;
+	display: inline-block;
+}
+
+.lr-badge__rating,
+.lr-badge__text {
+	font-size: 15px;
+	color: #3c4043;
+	font-weight: 500;
+	margin-left: 2px;
+	line-height: 1;
+}
+
+.lr-badge__arrow {
+	color: #70757a;
+	font-size: 18px;
+	font-weight: bold;
+	line-height: 1;
+}
+
+@media (max-width: 480px) {
+	.lr-badge {
+		width: 100%;
+		gap: 6px;
+	}
+}
+
+/* ------------------------------------------------------------------
+ * Button (Stil „google“)
+ * ------------------------------------------------------------------ */
+
+.lr-button-wrap {
+	margin: 30px 0;
+	width: 100%;
+}
+
+.lr-button-wrap--left { text-align: left; }
+.lr-button-wrap--center { text-align: center; }
+.lr-button-wrap--right { text-align: right; }
+
+.lr-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.lr-button__icon {
+	display: block;
+	flex-shrink: 0;
+}
+
+.lr-button--google {
+	background: #fff;
+	color: #3c4043;
+	border: 1px solid #dadce0;
+	border-radius: 4px;
+	padding: 10px 24px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+	transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.lr-button--google:hover,
+.lr-button--google:focus {
+	background-color: #f8f9fa;
+	color: #202124;
+	box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+	text-decoration: none;
+}
+
+/* ------------------------------------------------------------------
+ * Hinweise im Editor
+ * ------------------------------------------------------------------ */
+
+.lr-notice {
+	padding: 8px 12px;
+	background: #fff8e5;
+	border-left: 4px solid #dba617;
+	font-size: 13px;
+}

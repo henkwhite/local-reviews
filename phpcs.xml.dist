@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<ruleset name="Local Reviews">
+	<description>WordPress Coding Standards für das Plugin local-reviews</description>
+	<file>local-reviews</file>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+	<arg name="parallel" value="4"/>
+	<config name="testVersion" value="8.1-"/>
+	<config name="minimum_wp_version" value="6.5"/>
+	<rule ref="WordPress">
+		<!-- Dateinamen folgen bewusst dem Muster class-name.php; PSR-Namespaces sind erlaubt. -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<!-- Kurze Array-Syntax ist in diesem Plugin Standard. -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+	</rule>
+	<!-- index.asset.php ist die von WordPress vorgegebene Benennung für Block-Abhängigkeiten. -->
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>*/block/*/index.asset.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array"><element value="local-reviews"/></property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="local_reviews"/>
+				<element value="LocalReviews"/>
+				<element value="LOCAL_REVIEWS"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

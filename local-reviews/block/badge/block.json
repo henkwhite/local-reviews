@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "local-reviews/badge",
+	"version": "1.0.0",
+	"title": "Bewertungs-Badge (Local Reviews)",
+	"category": "widgets",
+	"icon": "awards",
+	"description": "Google-Schriftzug, Sterne und Anzahl der Bewertungen in einer Zeile.",
+	"keywords": [ "badge", "bewertungen", "google", "sterne" ],
+	"textdomain": "local-reviews",
+	"attributes": {
+		"anchor": { "type": "string", "default": "" },
+		"brand": { "type": "boolean", "default": true },
+		"rating": { "type": "boolean", "default": false },
+		"label": { "type": "string", "default": "Bewertungen" },
+		"arrow": { "type": "boolean", "default": true },
+		"link": { "type": "string", "default": "none", "enum": [ "none", "google", "custom" ] },
+		"url": { "type": "string", "default": "" },
+		"wrapper_class": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"spacing": { "margin": true, "padding": true }
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "local-reviews-frontend",
+	"render": "file:./render.php"
+}

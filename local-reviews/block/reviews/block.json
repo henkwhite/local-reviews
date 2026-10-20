@@ -1,0 +1,37 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "local-reviews/reviews",
+	"version": "1.0.0",
+	"title": "Bewertungen (Local Reviews)",
+	"category": "widgets",
+	"icon": "star-filled",
+	"description": "Kopfbereich mit Foto, Note und Anzahl, darunter die gespeicherten Bewertungen als Grid.",
+	"keywords": [ "bewertungen", "rezensionen", "google", "reviews", "kundenstimmen" ],
+	"textdomain": "local-reviews",
+	"attributes": {
+		"anchor": { "type": "string", "default": "" },
+		"header": { "type": "boolean", "default": true },
+		"photo": { "type": "boolean", "default": true },
+		"limit": { "type": "number", "default": 0 },
+		"columns": { "type": "number", "default": 1 },
+		"columns_tablet": { "type": "number", "default": 0 },
+		"columns_mobile": { "type": "number", "default": 1 },
+		"card_width": { "type": "number", "default": 400 },
+		"min_rating": { "type": "number", "default": 0 },
+		"hide_empty": { "type": "boolean", "default": false },
+		"excerpt": { "type": "number", "default": 0 },
+		"source": { "type": "string", "default": "" },
+		"show_source": { "type": "string", "default": "foreign", "enum": [ "off", "foreign", "all" ] },
+		"wrapper_class": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"spacing": { "margin": true, "padding": true }
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "local-reviews-frontend",
+	"render": "file:./render.php"
+}
