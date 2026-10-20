@@ -525,10 +525,9 @@ final class Render {
 		}
 		$main .= '</span>';
 
-		// Linktext rechts, durch eine senkrechte Linie getrennt. Leerer Text blendet ihn aus.
+		// Linktext rechts, durch eine senkrechte Linie getrennt (CSS-Rand). Leerer Text blendet ihn aus.
 		$link_text = trim( (string) $args['link_text'] );
 		if ( '' !== $link_text ) {
-			$main .= '<span class="lr-badge__divider" aria-hidden="true"></span>';
 			$main .= '<span class="lr-badge__cta">' . esc_html( $link_text );
 			if ( self::bool( $args['arrow'] ) ) {
 				$main .= ' <span class="lr-badge__cta-arrow" aria-hidden="true">→</span>';

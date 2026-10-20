@@ -1046,10 +1046,10 @@ $h = do_shortcode( '[google_badge_einzeln variant="stacked" label="Kundenbewertu
 ok( str_starts_with( $h, '<div class="lr-badge lr-badge--stacked">' ), 'stacked ohne Link: <div> mit Modifier', mb_substr( $h, 0, 80 ) );
 ok( str_contains( $h, '<span class="lr-badge__count">5 Kundenbewertungen</span>' ), 'stacked: Anzahl mit Label' );
 ok( str_contains( $h, '<span class="lr-badge__sub">u. a. auf Google, 11880 &amp; GoLocal</span>' ), 'stacked: Plattform-Zeile automatisch', dump( $h ) );
-ok( str_contains( $h, '<span class="lr-badge__divider" aria-hidden="true"></span><span class="lr-badge__cta">Alle Bewertungen ansehen <span class="lr-badge__cta-arrow" aria-hidden="true">→</span></span>' ), 'stacked: Trennlinie, Linktext, Pfeil' );
+ok( str_contains( $h, '</span></span><span class="lr-badge__cta">Alle Bewertungen ansehen <span class="lr-badge__cta-arrow" aria-hidden="true">→</span></span>' ), 'stacked: Linktext direkt nach dem Hauptteil (Linie per CSS), Pfeil' );
 ok( str_contains( $h, 'lr-badge__stars' ) && ! str_contains( $h, 'lr-badge__arrow' ), 'stacked: Sterne, kein klassischer Pfeil' );
 $h = do_shortcode( '[google_badge_einzeln variant="stacked" link_text="" arrow="0" subline="Eigene <b>Zeile</b>"]' );
-ok( ! str_contains( $h, 'lr-badge__cta' ) && ! str_contains( $h, 'lr-badge__divider' ), 'link_text leer: kein Linktext, keine Trennlinie' );
+ok( ! str_contains( $h, 'lr-badge__cta' ) && ! str_contains( $h, 'lr-badge__divider' ), 'link_text leer: kein Linktext, damit keine Trennlinie' );
 ok( str_contains( $h, '<span class="lr-badge__sub">Eigene &lt;b&gt;Zeile&lt;/b&gt;</span>' ), 'subline eigener Text, escaped' );
 $h = do_shortcode( '[google_badge_einzeln variant="stacked" link="google" link_text="Mehr" arrow="0"]' );
 ok( str_starts_with( $h, '<a class="lr-badge lr-badge--stacked" href="https://www.google.com/maps/place//data=liste" target="_blank" rel="noopener nofollow">' ) && str_contains( $h, '<span class="lr-badge__cta">Mehr</span>' ), 'stacked mit Link: ganzes Badge als <a>, Pfeil aus', mb_substr( $h, 0, 140 ) );

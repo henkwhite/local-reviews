@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.5.2 =
+* Gestapelter Badge: Der Linktext steht rechts, solange er daneben passt, und rutscht erst bei echtem Platzmangel darunter, abhängig vom Platz im Container statt von einer festen Bildschirmbreite (vorher immer unter 480 px). Die Trennlinie verschwindet dann automatisch.
 
 = 1.5.1 =
 * Gestapelter Badge: alle Größen in em, bezogen auf die Schriftgröße des Themes, und skaliert dadurch im gleichen Verhältnis mit. Anzahl 1,3 em, Plattform-Zeile 0,7 em (bei 17 px Grundschrift knapp 12 px). Kein Abstand mehr unter dem Badge.

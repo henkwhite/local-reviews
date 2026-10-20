@@ -290,9 +290,12 @@ a.lr-source:focus {
  * ------------------------------------------------------------------ */
 
 .lr-badge.lr-badge--stacked {
-	align-items: center;
-	flex-wrap: nowrap;
-	gap: 1.65em;
+	/* Linktext bleibt rechts, bis er wirklich nicht mehr daneben passt, dann rutscht er darunter.
+	 * overflow: hidden schneidet die Trennlinie ab, sobald der Linktext am Zeilenanfang steht. */
+	align-items: stretch;
+	flex-wrap: wrap;
+	gap: 0.7em 0;
+	overflow: hidden;
 	font-family: inherit;
 	color: var(--lr-badge-text, var(--contrast, #222));
 }
@@ -304,8 +307,15 @@ a.lr-source:focus {
 .lr-badge--stacked .lr-badge__main {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	gap: 0.25em;
 	min-width: 0;
+	padding-right: 1.65em; /* Abstand zum Linktext, die Linie sitzt in der Mitte. */
+}
+
+/* Ohne Linktext kein Abstand nach rechts. */
+.lr-badge--stacked .lr-badge__main:last-child {
+	padding-right: 0;
 }
 
 .lr-badge--stacked .lr-badge__top {
@@ -346,14 +356,18 @@ a.lr-source:focus {
 	color: var(--lr-badge-muted, #6b6b6b);
 }
 
-.lr-badge--stacked .lr-badge__divider {
-	align-self: stretch;
-	width: 1px;
-	background: var(--lr-badge-line, #d5d5d5);
-}
-
-/* Kein nowrap: In schmalen Spalten bricht der Linktext um, statt überzulaufen. */
+/* Trennlinie als linker Rand des Linktexts, um die halbe Lücke nach links gezogen.
+ * Steht der Linktext in einer eigenen Zeile, liegt die Linie links außerhalb und wird
+ * abgeschnitten, der Text beginnt bündig. Kein nowrap: Ist der Linktext allein in
+ * der Zeile immer noch zu breit, bricht er um, statt überzulaufen. */
 .lr-badge--stacked .lr-badge__cta {
+	display: flex;
+	align-items: center;
+	gap: 0.3em; /* Ersetzt das Leerzeichen vor dem Pfeil, das Flexbox verschluckt. */
+	min-width: 0;
+	margin-left: -0.825em;
+	padding-left: 0.825em;
+	border-left: 1px solid var(--lr-badge-line, #d5d5d5);
 	font-size: 0.95em;
 	font-weight: 600;
 	color: var(--lr-badge-link, var(--accent, #1e8fa3));
@@ -362,21 +376,6 @@ a.lr-source:focus {
 .lr-badge--stacked:hover .lr-badge__cta,
 .lr-badge--stacked:focus-visible .lr-badge__cta {
 	text-decoration: underline;
-}
-
-/* Smartphone: Linktext unter den Block, Trennlinie waagerecht.
- * Der Umbruchpunkt bleibt in px, weil er sich auf die Bildschirmbreite bezieht. */
-@media (max-width: 480px) {
-	.lr-badge.lr-badge--stacked {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.7em;
-	}
-
-	.lr-badge--stacked .lr-badge__divider {
-		width: 100%;
-		height: 1px;
-	}
 }
 
 /* ------------------------------------------------------------------
