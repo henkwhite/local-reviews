@@ -162,7 +162,7 @@ final class Render {
 			'hide_empty'     => false,
 			'excerpt'        => 0,   // 0: ungekürzt, sonst Zeichen.
 			'source'         => '',  // Leer: alle, sonst Kürzel mit Komma.
-			'show_source'    => 'foreign', // off | foreign | all.
+			'show_source'    => '',  // Leer: Einstellung | off | foreign | all.
 			'wrapper_class'  => '',
 		];
 	}
@@ -174,7 +174,8 @@ final class Render {
 	 */
 	public static function badge_defaults(): array {
 		return [
-			'brand'         => true,
+			'brand'         => '',     // Leer/1: Einstellung | 0: kein Logo | google | none | image.
+			'logo'          => '',     // Wie brand, Name im Block (brand ist dort ein alter Schalter).
 			'rating'        => false,
 			'label'         => __( 'Bewertungen', 'local-reviews' ),
 			'arrow'         => true,
@@ -227,7 +228,7 @@ final class Render {
 			]
 		);
 
-		$show_source = in_array( $args['show_source'], [ 'off', 'foreign', 'all' ], true ) ? $args['show_source'] : 'foreign';
+		$show_source = in_array( $args['show_source'], [ 'off', 'foreign', 'all' ], true ) ? $args['show_source'] : (string) Settings::get( 'show_source' );
 		$columns     = max( 1, min( 6, absint( $args['columns'] ) ) );
 		$tablet      = absint( $args['columns_tablet'] );
 		$mobile      = max( 1, min( 6, absint( $args['columns_mobile'] ) ) );
@@ -346,8 +347,13 @@ final class Render {
 		/* translators: %s: Name der Plattform, z. B. 11880. */
 		$text = sprintf( __( 'via %s', 'local-reviews' ), $label );
 
-		if ( '' !== $review['url'] ) {
-			return '<a class="' . esc_attr( $classes ) . '" href="' . esc_url( (string) $review['url'] ) . '" target="_blank" rel="noopener nofollow">' . esc_html( $text ) . '</a>';
+		// Direktlink zur Bewertung; bei Google ohne Direktlink ersatzweise die Bewertungsliste.
+		$url = (string) $review['url'];
+		if ( '' === $url && 'google' === $review['source'] ) {
+			$url = Profile::reviews_url();
+		}
+		if ( '' !== $url ) {
+			return '<a class="' . esc_attr( $classes ) . '" href="' . esc_url( $url ) . '" target="_blank" rel="noopener nofollow">' . esc_html( $text ) . '</a>';
 		}
 		return '<span class="' . esc_attr( $classes ) . '">' . esc_html( $text ) . '</span>';
 	}
@@ -380,9 +386,7 @@ final class Render {
 			return self::is_editor_preview() ? '<p class="lr-notice">' . esc_html__( 'Badge: Noch keine Bewertungen. API-Key und Place ID unter Einstellungen > Local Reviews eintragen oder Bewertungen importieren.', 'local-reviews' ) . '</p>' : '';
 		}
 
-		if ( self::bool( $args['brand'] ) ) {
-			$parts .= '<span class="lr-badge__brand" role="img" aria-label="Google"><span class="lr-g-blue" aria-hidden="true">G</span><span class="lr-g-red" aria-hidden="true">o</span><span class="lr-g-yellow" aria-hidden="true">o</span><span class="lr-g-blue" aria-hidden="true">g</span><span class="lr-g-green" aria-hidden="true">l</span><span class="lr-g-red" aria-hidden="true">e</span></span>';
-		}
+		$parts .= self::badge_logo( self::logo_mode( $args ) );
 		if ( self::bool( $args['rating'] ) && $summary['count'] > 0 ) {
 			$parts .= '<span class="lr-badge__rating">' . esc_html( number_format_i18n( $summary['rating'], 1 ) ) . '</span>';
 		}
@@ -408,6 +412,51 @@ final class Render {
 		}
 		// Ohne Link ein <p> wie im alten Snippet, damit es in einem umgebenden Link (z. B. GB-Overlay) gleich aussieht.
 		return '<p class="' . esc_attr( $classes ) . '">' . $parts . '</p>';
+	}
+
+	/**
+	 * Welches Logo der Badge zeigt.
+	 *
+	 * Reihenfolge: Block-Attribut logo, Shortcode-Attribut brand (google|none|image
+	 * oder alt 0/1), sonst die Einstellung. brand=1 bzw. der alte Block-Schalter „an“
+	 * bedeuten „wie in den Einstellungen“.
+	 *
+	 * @param array<string, mixed> $args Attribute des Badges.
+	 */
+	private static function logo_mode( array $args ): string {
+		$modes = [ 'google', 'none', 'image' ];
+		foreach ( [ 'logo', 'brand' ] as $key ) {
+			$value = is_bool( $args[ $key ] ) ? $args[ $key ] : strtolower( trim( (string) $args[ $key ] ) );
+			if ( is_string( $value ) && in_array( $value, $modes, true ) ) {
+				return $value;
+			}
+		}
+		if ( '' !== $args['brand'] && ! self::bool( $args['brand'] ) ) {
+			return 'none';
+		}
+		$setting = (string) Settings::get( 'badge_logo' );
+		return in_array( $setting, $modes, true ) ? $setting : 'google';
+	}
+
+	/**
+	 * HTML des Logos im Badge.
+	 *
+	 * @param string $mode google | none | image.
+	 */
+	private static function badge_logo( string $mode ): string {
+		if ( 'image' === $mode ) {
+			$id  = (int) Settings::get( 'badge_logo_id' );
+			$src = $id ? wp_get_attachment_image_url( $id, 'medium' ) : false;
+			if ( ! $src ) {
+				return '';
+			}
+			$alt = (string) get_post_meta( $id, '_wp_attachment_image_alt', true );
+			return '<img class="lr-badge__logo" src="' . esc_url( $src ) . '" alt="' . esc_attr( $alt ) . '" decoding="async">';
+		}
+		if ( 'google' === $mode ) {
+			return '<span class="lr-badge__brand" role="img" aria-label="Google"><span class="lr-g-blue" aria-hidden="true">G</span><span class="lr-g-red" aria-hidden="true">o</span><span class="lr-g-yellow" aria-hidden="true">o</span><span class="lr-g-blue" aria-hidden="true">g</span><span class="lr-g-green" aria-hidden="true">l</span><span class="lr-g-red" aria-hidden="true">e</span></span>';
+		}
+		return '';
 	}
 
 	/**

@@ -111,3 +111,14 @@
 .local-reviews-guide table {
 	max-width: 900px;
 }
+
+.local-reviews-logo {
+	height: 20px;
+	width: auto;
+	max-width: 140px;
+	margin-right: 10px;
+}
+
+.local-reviews-logo[hidden] {
+	display: none;
+}

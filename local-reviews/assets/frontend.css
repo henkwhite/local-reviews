@@ -167,6 +167,14 @@ a.lr-source:focus {
 	line-height: 1;
 }
 
+.lr-badge__logo {
+	display: block;
+	height: 20px;
+	width: auto;
+	max-width: 140px;
+	object-fit: contain;
+}
+
 .lr-g-blue { color: #4285f4; }
 .lr-g-red { color: #ea4335; }
 .lr-g-yellow { color: #fbbc05; }

@@ -21,19 +21,22 @@ final class Settings {
 	 */
 	public static function defaults(): array {
 		return [
-			'place_id'     => '',
-			'language'     => '',        // Leer: Sprache der WordPress-Installation.
-			'company_name' => '',        // Leer: Name aus dem Google-Profil (displayName).
-			'photo_source' => 'google',  // google | media.
-			'photo_id'     => 0,         // Anhang-ID bei photo_source = media.
-			'star_color'   => '#fbbc05',
-			'date_format'  => '',        // Leer: Datumsformat der WordPress-Installation.
-			'sort'         => 'newest',  // newest | oldest | rating.
-			'load_css'     => true,
-			'button_mode'  => 'auto',    // auto | custom.
-			'button_url'   => '',        // Eigene URL zur Bewertungsliste.
-			'write_url'    => '',        // Eigene URL „Bewertung schreiben“, leer: automatisch.
-			'badge_count'  => 'google',  // google: Anzahl laut Google | local: sichtbare Bewertungen im Plugin.
+			'place_id'      => '',
+			'language'      => '',        // Leer: Sprache der WordPress-Installation.
+			'company_name'  => '',        // Leer: Name aus dem Google-Profil (displayName).
+			'photo_source'  => 'google',  // google | media.
+			'photo_id'      => 0,         // Anhang-ID bei photo_source = media.
+			'star_color'    => '#fbbc05',
+			'date_format'   => '',        // Leer: Datumsformat der WordPress-Installation.
+			'sort'          => 'newest',  // newest | oldest | rating.
+			'load_css'      => true,
+			'button_mode'   => 'auto',    // auto | custom.
+			'button_url'    => '',        // Eigene URL zur Bewertungsliste.
+			'write_url'     => '',        // Eigene URL „Bewertung schreiben“, leer: automatisch.
+			'badge_count'   => 'google',  // google: Anzahl laut Google | local: sichtbare Bewertungen im Plugin.
+			'badge_logo'    => 'google',  // google: Schriftzug | none: kein Logo | image: Bild aus der Mediathek.
+			'badge_logo_id' => 0,        // Anhang-ID bei badge_logo = image.
+			'show_source'   => 'foreign', // Plattform-Hinweis „via …“: off | foreign | all.
 		];
 	}
 
@@ -173,19 +176,22 @@ final class Settings {
 		$button_mode  = in_array( $input['button_mode'] ?? '', [ 'auto', 'custom' ], true ) ? $input['button_mode'] : 'auto';
 
 		return [
-			'place_id'     => (string) $place_id,
-			'language'     => substr( (string) $language, 0, 10 ),
-			'company_name' => sanitize_text_field( (string) ( $input['company_name'] ?? '' ) ),
-			'photo_source' => $photo_source,
-			'photo_id'     => absint( $input['photo_id'] ?? 0 ),
-			'star_color'   => $color ? $color : $defaults['star_color'],
-			'date_format'  => sanitize_text_field( (string) ( $input['date_format'] ?? '' ) ),
-			'sort'         => $sort,
-			'load_css'     => ! empty( $input['load_css'] ),
-			'button_mode'  => $button_mode,
-			'button_url'   => esc_url_raw( (string) ( $input['button_url'] ?? '' ), [ 'http', 'https' ] ),
-			'write_url'    => esc_url_raw( (string) ( $input['write_url'] ?? '' ), [ 'http', 'https' ] ),
-			'badge_count'  => in_array( $input['badge_count'] ?? '', [ 'google', 'local' ], true ) ? $input['badge_count'] : 'google',
+			'place_id'      => (string) $place_id,
+			'language'      => substr( (string) $language, 0, 10 ),
+			'company_name'  => sanitize_text_field( (string) ( $input['company_name'] ?? '' ) ),
+			'photo_source'  => $photo_source,
+			'photo_id'      => absint( $input['photo_id'] ?? 0 ),
+			'star_color'    => $color ? $color : $defaults['star_color'],
+			'date_format'   => sanitize_text_field( (string) ( $input['date_format'] ?? '' ) ),
+			'sort'          => $sort,
+			'load_css'      => ! empty( $input['load_css'] ),
+			'button_mode'   => $button_mode,
+			'button_url'    => esc_url_raw( (string) ( $input['button_url'] ?? '' ), [ 'http', 'https' ] ),
+			'write_url'     => esc_url_raw( (string) ( $input['write_url'] ?? '' ), [ 'http', 'https' ] ),
+			'badge_count'   => in_array( $input['badge_count'] ?? '', [ 'google', 'local' ], true ) ? $input['badge_count'] : 'google',
+			'badge_logo'    => in_array( $input['badge_logo'] ?? '', [ 'google', 'none', 'image' ], true ) ? $input['badge_logo'] : 'google',
+			'badge_logo_id' => absint( $input['badge_logo_id'] ?? 0 ),
+			'show_source'   => in_array( $input['show_source'] ?? '', [ 'off', 'foreign', 'all' ], true ) ? $input['show_source'] : 'foreign',
 		];
 	}
 }

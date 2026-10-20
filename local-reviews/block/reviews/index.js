@@ -84,6 +84,7 @@
 							label: __( 'Plattform anzeigen', 'local-reviews' ),
 							value: attrs.show_source,
 							options: [
+								{ value: '', label: __( 'Wie in den Einstellungen', 'local-reviews' ) },
 								{ value: 'off', label: __( 'Aus', 'local-reviews' ) },
 								{ value: 'foreign', label: __( 'Nur andere Plattformen als Google', 'local-reviews' ) },
 								{ value: 'all', label: __( 'Bei allen Bewertungen', 'local-reviews' ) }

@@ -34,7 +34,20 @@
 					el(
 						components.PanelBody,
 						{ title: __( 'Inhalt', 'local-reviews' ) },
-						toggleControl( props, 'brand', __( 'Google-Schriftzug', 'local-reviews' ) ),
+						el( components.SelectControl, {
+							label: __( 'Logo', 'local-reviews' ),
+							value: attrs.logo || ( attrs.brand === false ? 'none' : '' ),
+							options: [
+								{ value: '', label: __( 'Wie in den Einstellungen', 'local-reviews' ) },
+								{ value: 'google', label: __( 'Google-Schriftzug', 'local-reviews' ) },
+								{ value: 'none', label: __( 'Kein Logo', 'local-reviews' ) },
+								{ value: 'image', label: __( 'Bild aus den Einstellungen', 'local-reviews' ) }
+							],
+							onChange: function ( value ) {
+								// Der alte Schalter brand wird zurückgesetzt, logo entscheidet.
+								props.setAttributes( { logo: value, brand: true } );
+							}
+						} ),
 						toggleControl( props, 'rating', __( 'Note als Zahl', 'local-reviews' ) ),
 						toggleControl( props, 'arrow', __( 'Pfeil am Ende', 'local-reviews' ) ),
 						el( components.SelectControl, {

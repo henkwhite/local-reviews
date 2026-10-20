@@ -914,8 +914,54 @@ Settings::update( [ 'badge_count' => 'quatsch' ] );
 ok( 'google' === Settings::get( 'badge_count' ), 'ungültiger Wert für badge_count wird google' );
 $html = do_shortcode( '[google_reviews_lokal show_source="all" header="0"]' );
 ok( str_contains( $html, '<a class="lr-source lr-source--google" href="https://www.google.com/maps/reviews/data=abc" target="_blank" rel="noopener nofollow">via Google</a>' ), 'show_source=all: „via Google“ als Link zur Original-Bewertung' );
-ok( str_contains( $html, '<span class="lr-source lr-source--google">via Google</span>' ), 'show_source=all: ohne Link als Text' );
+ok( 2 === substr_count( $html, '>via Google</a>' ) && ! str_contains( $html, '<span class="lr-source lr-source--google">' ), 'show_source=all: Google ohne Direktlink verlinkt ersatzweise (ab 1.3.0)' );
 ok( ! str_contains( do_shortcode( '[google_reviews_lokal header="0"]' ), 'via Google' ), 'Standard foreign: kein „via Google“' );
+
+// 1.3.0: Logo im Badge, Plattform-Hinweis als Einstellung, Ersatzlink für Google.
+reset_state();
+Profile::update( [ 'rating' => 5.0, 'count' => 83, 'name' => 'Testfirma GmbH', 'reviews_uri' => 'https://www.google.com/maps/place//data=liste' ] );
+seed(
+	[
+		entry( 'l1', [ 'name' => 'Mit Link', 'rating' => 5, 'text' => 'A', 'url' => 'https://www.google.com/maps/reviews/data=direkt', 'timestamp' => $d( '2024-05-01' ) ] ),
+		entry( 'l2', [ 'name' => 'Ohne Link', 'rating' => 5, 'text' => 'B', 'timestamp' => $d( '2024-04-01' ) ] ),
+		entry( 'l3', [ 'source' => '11880', 'name' => 'Elf ohne Link', 'rating' => 5, 'text' => 'C', 'timestamp' => $d( '2024-03-01' ) ] ),
+	]
+);
+ok( str_contains( do_shortcode( '[google_badge_einzeln]' ), 'lr-badge__brand' ), 'Logo Standard: Google-Schriftzug' );
+Settings::update( [ 'badge_logo' => 'none' ] );
+ok( ! str_contains( do_shortcode( '[google_badge_einzeln]' ), 'lr-badge__brand' ), 'Einstellung kein Logo' );
+ok( str_contains( do_shortcode( '[google_badge_einzeln brand="google"]' ), 'lr-badge__brand' ), 'brand="google" überschreibt Einstellung' );
+ok( ! str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge /-->' )[0] ), 'lr-badge__brand' ), 'Block ohne Angabe folgt Einstellung (kein Logo)' );
+Settings::update( [ 'badge_logo' => 'google' ] );
+ok( ! str_contains( do_shortcode( '[google_badge_einzeln brand="0"]' ), 'lr-badge__brand' ), 'altes brand="0" blendet aus' );
+ok( ! str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge {"brand":false} /-->' )[0] ), 'lr-badge__brand' ), 'alter Block-Schalter brand=false blendet aus' );
+ok( ! str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge {"logo":"none"} /-->' )[0] ), 'lr-badge__brand' ), 'Block logo=none' );
+$img = imagecreatetruecolor( 40, 10 );
+ob_start();
+imagepng( $img );
+$png  = (string) ob_get_clean();
+$up   = wp_upload_bits( 'lr-logo-test.png', null, $png );
+$att  = wp_insert_attachment( [ 'post_mime_type' => 'image/png', 'post_title' => 'Logo' ], $up['file'] );
+update_post_meta( $att, '_wp_attachment_image_alt', 'Unser Logo' );
+Settings::update( [ 'badge_logo' => 'image', 'badge_logo_id' => $att ] );
+$badge = do_shortcode( '[google_badge_einzeln]' );
+ok( str_contains( $badge, 'class="lr-badge__logo"' ) && str_contains( $badge, 'alt="Unser Logo"' ), 'Einstellung eigenes Bild', mb_substr( $badge, 0, 160 ) );
+Settings::update( [ 'badge_logo_id' => 0 ] );
+ok( ! str_contains( do_shortcode( '[google_badge_einzeln]' ), 'lr-badge__logo' ), 'Bild gewählt, aber keins hinterlegt: kein Logo, kein Fehler' );
+wp_delete_attachment( $att, true );
+Settings::update( [ 'badge_logo' => 'google' ] );
+
+$html = do_shortcode( '[google_reviews_lokal header="0"]' );
+ok( ! str_contains( $html, 'via Google' ) && str_contains( $html, 'via 11880' ), 'Plattform-Hinweis Standard foreign' );
+Settings::update( [ 'show_source' => 'all' ] );
+$html = do_shortcode( '[google_reviews_lokal header="0"]' );
+ok( str_contains( $html, 'href="https://www.google.com/maps/reviews/data=direkt" target="_blank" rel="noopener nofollow">via Google</a>' ), 'Einstellung all: Direktlink' );
+ok( str_contains( $html, 'href="https://www.google.com/maps/place//data=liste" target="_blank" rel="noopener nofollow">via Google</a>' ), 'Google ohne Direktlink: Link auf Bewertungsliste' );
+ok( str_contains( $html, '<span class="lr-source lr-source--11880">via 11880</span>' ), 'andere Plattform ohne Link: nur Text' );
+ok( str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/reviews {"header":false} /-->' )[0] ), 'via Google' ), 'Block ohne Angabe folgt Einstellung all' );
+ok( ! str_contains( do_shortcode( '[google_reviews_lokal header="0" show_source="off"]' ), 'lr-source' ), 'show_source="off" überschreibt Einstellung' );
+Settings::update( [ 'show_source' => 'quatsch' ] );
+ok( 'foreign' === Settings::get( 'show_source' ), 'ungültiger show_source wird foreign' );
 
 section( '7. Plattformen' );
 remove_all_filters( 'local_reviews_sources' );

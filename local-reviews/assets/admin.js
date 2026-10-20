@@ -19,35 +19,40 @@
 	$( document ).on( 'change', '#lr-source', toggleSourceLabel );
 	$( toggleSourceLabel );
 
-	// Foto aus der Mediathek wählen.
-	var frame;
-	$( document ).on( 'click', '#lr-photo-select', function ( event ) {
+	// Bild aus der Mediathek wählen (Foto im Kopfbereich, Logo im Badge).
+	// data-target: Präfix der Felder {target}-id und {target}-preview,
+	// data-radio: Name der Einstellung, deren Option „Bild“ dabei ausgewählt wird.
+	var frames = {};
+	$( document ).on( 'click', '.lr-media-select', function ( event ) {
 		event.preventDefault();
 		if ( ! window.wp || ! window.wp.media ) {
 			return;
 		}
-		if ( ! frame ) {
-			frame = window.wp.media( {
+		var target = $( this ).data( 'target' );
+		var radio = $( this ).data( 'radio' );
+		if ( ! frames[ target ] ) {
+			frames[ target ] = window.wp.media( {
 				title: l10n.mediaTitle,
 				button: { text: l10n.mediaButton },
 				library: { type: 'image' },
 				multiple: false
 			} );
-			frame.on( 'select', function () {
-				var attachment = frame.state().get( 'selection' ).first().toJSON();
-				var url = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
-				$( '#lr-photo-id' ).val( attachment.id );
-				$( '#lr-photo-preview' ).attr( 'src', url ).prop( 'hidden', false );
-				$( '#lr-photo-remove' ).prop( 'hidden', false );
-				$( 'input[name="local_reviews[photo_source]"][value="media"]' ).prop( 'checked', true );
+			frames[ target ].on( 'select', function () {
+				var attachment = frames[ target ].state().get( 'selection' ).first().toJSON();
+				var url = attachment.sizes && attachment.sizes.medium ? attachment.sizes.medium.url : attachment.url;
+				$( '#' + target + '-id' ).val( attachment.id );
+				$( '#' + target + '-preview' ).attr( 'src', url ).prop( 'hidden', false );
+				$( '.lr-media-remove[data-target="' + target + '"]' ).prop( 'hidden', false );
+				$( 'input[name="local_reviews[' + radio + ']"][value="' + ( radio === 'photo_source' ? 'media' : 'image' ) + '"]' ).prop( 'checked', true );
 			} );
 		}
-		frame.open();
+		frames[ target ].open();
 	} );
-	$( document ).on( 'click', '#lr-photo-remove', function ( event ) {
+	$( document ).on( 'click', '.lr-media-remove', function ( event ) {
 		event.preventDefault();
-		$( '#lr-photo-id' ).val( '0' );
-		$( '#lr-photo-preview' ).attr( 'src', '' ).prop( 'hidden', true );
+		var target = $( this ).data( 'target' );
+		$( '#' + target + '-id' ).val( '0' );
+		$( '#' + target + '-preview' ).attr( 'src', '' ).prop( 'hidden', true );
 		$( this ).prop( 'hidden', true );
 	} );
 } )( jQuery );

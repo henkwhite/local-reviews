@@ -85,8 +85,8 @@ final class Admin_Page {
 			[
 				'confirmDelete'       => __( 'Diesen Eintrag endgültig löschen? Das lässt sich nicht rückgängig machen.', 'local-reviews' ),
 				'confirmDeleteLegacy' => __( 'Alte Snippet-Daten löschen? Vorher prüfen, ob die Seite mit dem Plugin richtig aussieht.', 'local-reviews' ),
-				'mediaTitle'          => __( 'Foto für den Kopfbereich wählen', 'local-reviews' ),
-				'mediaButton'         => __( 'Foto verwenden', 'local-reviews' ),
+				'mediaTitle'          => __( 'Bild wählen', 'local-reviews' ),
+				'mediaButton'         => __( 'Bild verwenden', 'local-reviews' ),
 			]
 		);
 	}
@@ -684,8 +684,8 @@ final class Admin_Page {
 						<div class="local-reviews-media">
 							<input type="hidden" id="lr-photo-id" name="local_reviews[photo_id]" value="<?php echo esc_attr( (string) $s['photo_id'] ); ?>">
 							<img id="lr-photo-preview" src="<?php echo esc_url( (string) $photo ); ?>" alt="" class="local-reviews-thumb"<?php echo $photo ? '' : ' hidden'; ?>>
-							<button type="button" class="button" id="lr-photo-select"><?php esc_html_e( 'Bild wählen', 'local-reviews' ); ?></button>
-							<button type="button" class="button-link" id="lr-photo-remove"<?php echo $photo ? '' : ' hidden'; ?>><?php esc_html_e( 'Entfernen', 'local-reviews' ); ?></button>
+							<button type="button" class="button lr-media-select" data-target="lr-photo" data-radio="photo_source"><?php esc_html_e( 'Bild wählen', 'local-reviews' ); ?></button>
+							<button type="button" class="button-link lr-media-remove" data-target="lr-photo"<?php echo $photo ? '' : ' hidden'; ?>><?php esc_html_e( 'Entfernen', 'local-reviews' ); ?></button>
 						</div>
 					</td>
 				</tr>
@@ -708,6 +708,35 @@ final class Admin_Page {
 							<option value="oldest" <?php selected( $s['sort'], 'oldest' ); ?>><?php esc_html_e( 'Älteste zuerst', 'local-reviews' ); ?></option>
 							<option value="rating" <?php selected( $s['sort'], 'rating' ); ?>><?php esc_html_e( 'Beste zuerst', 'local-reviews' ); ?></option>
 						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Logo im Badge', 'local-reviews' ); ?></th>
+					<td>
+						<?php $local_reviews_logo = $s['badge_logo_id'] ? wp_get_attachment_image_url( (int) $s['badge_logo_id'], 'medium' ) : ''; ?>
+						<fieldset>
+							<label><input type="radio" name="local_reviews[badge_logo]" value="google" <?php checked( $s['badge_logo'], 'google' ); ?>> <?php esc_html_e( 'Google-Schriftzug', 'local-reviews' ); ?></label><br>
+							<label><input type="radio" name="local_reviews[badge_logo]" value="none" <?php checked( $s['badge_logo'], 'none' ); ?>> <?php esc_html_e( 'Kein Logo', 'local-reviews' ); ?></label><br>
+							<label><input type="radio" name="local_reviews[badge_logo]" value="image" <?php checked( $s['badge_logo'], 'image' ); ?>> <?php esc_html_e( 'Eigenes Bild aus der Mediathek (wird auf 20 px Höhe skaliert)', 'local-reviews' ); ?></label>
+						</fieldset>
+						<div class="local-reviews-media">
+							<input type="hidden" id="lr-logo-id" name="local_reviews[badge_logo_id]" value="<?php echo esc_attr( (string) $s['badge_logo_id'] ); ?>">
+							<img id="lr-logo-preview" src="<?php echo esc_url( (string) $local_reviews_logo ); ?>" alt="" class="local-reviews-logo"<?php echo $local_reviews_logo ? '' : ' hidden'; ?>>
+							<button type="button" class="button lr-media-select" data-target="lr-logo" data-radio="badge_logo"><?php esc_html_e( 'Bild wählen', 'local-reviews' ); ?></button>
+							<button type="button" class="button-link lr-media-remove" data-target="lr-logo"<?php echo $local_reviews_logo ? '' : ' hidden'; ?>><?php esc_html_e( 'Entfernen', 'local-reviews' ); ?></button>
+						</div>
+						<p class="description"><?php esc_html_e( 'Pro Badge überschreibbar (Block-Einstellung „Logo“ bzw. brand="google|none|image").', 'local-reviews' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="lr-show-source"><?php esc_html_e( 'Plattform-Hinweis', 'local-reviews' ); ?></label></th>
+					<td>
+						<select id="lr-show-source" name="local_reviews[show_source]">
+							<option value="off" <?php selected( $s['show_source'], 'off' ); ?>><?php esc_html_e( 'Aus', 'local-reviews' ); ?></option>
+							<option value="foreign" <?php selected( $s['show_source'], 'foreign' ); ?>><?php esc_html_e( 'Nur bei anderen Plattformen als Google', 'local-reviews' ); ?></option>
+							<option value="all" <?php selected( $s['show_source'], 'all' ); ?>><?php esc_html_e( 'Bei allen Bewertungen, auch „via Google“', 'local-reviews' ); ?></option>
+						</select>
+						<p class="description"><?php esc_html_e( '„via 11880“ usw. unter jeder Karte, als Link zur Original-Bewertung. Google-Bewertungen ohne Direktlink verlinken auf die Bewertungsliste bei Google. Pro Block bzw. mit show_source="…" überschreibbar.', 'local-reviews' ); ?></p>
 					</td>
 				</tr>
 				<tr>

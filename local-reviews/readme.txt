@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,11 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.3.0 =
+* Neue Einstellung „Logo im Badge“: Google-Schriftzug, kein Logo oder eigenes Bild aus der Mediathek. Pro Badge überschreibbar (Block „Logo“, Shortcode brand="google|none|image").
+* Neue Einstellung „Plattform-Hinweis“ (aus / nur andere Plattformen / alle). Blöcke und Shortcodes ohne eigene Angabe folgen ihr.
+* „via Google“ ohne Direktlink zur Bewertung verlinkt auf die Bewertungsliste bei Google.
 
 = 1.2.0 =
 * Neue Einstellung „Anzahl im Badge“: Anzahl laut Google oder die sichtbaren Bewertungen im Plugin (alle Plattformen, ohne ausgeblendete). Pro Badge überschreibbar (Block bzw. Shortcode-Attribut count).

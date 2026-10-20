@@ -57,7 +57,7 @@ $local_reviews_reviews_url  = LocalReviews\Admin_Page::url( [ 'tab' => 'reviews'
 			<tr><td><code>hide_empty</code></td><td>0</td><td>Bewertungen ohne Text ausblenden</td></tr>
 			<tr><td><code>excerpt</code></td><td>0</td><td>Text auf so viele Zeichen kürzen, 0 = ungekürzt</td></tr>
 			<tr><td><code>source</code></td><td>(leer)</td><td>Nur bestimmte Plattformen, z. B. <code>google,11880</code></td></tr>
-			<tr><td><code>show_source</code></td><td>foreign</td><td>Plattform-Hinweis „via …“: <code>off</code>, <code>foreign</code> (nur andere als Google), <code>all</code> (auch „via Google“). Ist ein Link zur Original-Bewertung hinterlegt, ist der Hinweis anklickbar</td></tr>
+			<tr><td><code>show_source</code></td><td>(Einstellung)</td><td>Plattform-Hinweis „via …“: <code>off</code>, <code>foreign</code> (nur andere als Google), <code>all</code> (auch „via Google“). Standard aus Einstellungen › Plattform-Hinweis. Ist ein Link zur Original-Bewertung hinterlegt, ist der Hinweis anklickbar; Google-Bewertungen ohne Direktlink verlinken auf die Bewertungsliste</td></tr>
 			<tr><td><code>wrapper_class</code></td><td>(leer)</td><td>Eigene CSS-Klassen am äußeren Element</td></tr>
 		</tbody>
 	</table>
@@ -67,7 +67,7 @@ $local_reviews_reviews_url  = LocalReviews\Admin_Page::url( [ 'tab' => 'reviews'
 	<table class="widefat striped">
 		<thead><tr><th>Attribut</th><th>Standard</th><th>Bedeutung</th></tr></thead>
 		<tbody>
-			<tr><td><code>brand</code></td><td>1</td><td>Google-Schriftzug</td></tr>
+			<tr><td><code>brand</code></td><td>(Einstellung)</td><td>Logo: <code>google</code> (Schriftzug), <code>none</code> bzw. <code>0</code> (kein Logo), <code>image</code> (Bild aus Einstellungen › Logo im Badge). Standard aus den Einstellungen</td></tr>
 			<tr><td><code>rating</code></td><td>0</td><td>Note als Zahl vor den Sternen</td></tr>
 			<tr><td><code>label</code></td><td>Bewertungen</td><td>Text hinter der Anzahl</td></tr>
 			<tr><td><code>arrow</code></td><td>1</td><td>Pfeil „›“ am Ende</td></tr>
