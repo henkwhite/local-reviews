@@ -52,9 +52,33 @@ final class Render {
 		add_shortcode( 'google_badge_einzeln', [ self::class, 'shortcode_badge' ] );
 		add_shortcode( 'google_reviews_button', [ self::class, 'shortcode_button' ] );
 
+		add_filter( 'block_type_metadata_settings', [ self::class, 'translate_block_defaults' ], 10, 2 );
 		foreach ( [ 'reviews', 'badge', 'button' ] as $block ) {
 			register_block_type( PLUGIN_DIR . 'block/' . $block );
 		}
+	}
+
+	/**
+	 * Übersetzt die Text-Standardwerte des Badge-Blocks.
+	 *
+	 * Die block.json kann Standardwerte nicht übersetzen. Der Editor übernimmt die
+	 * serverseitig registrierten Attribute, deshalb gilt der übersetzte Text dort
+	 * genauso wie in der Ausgabe und wie beim Shortcode (badge_defaults()).
+	 *
+	 * @param array<string, mixed> $settings Einstellungen des Blocks.
+	 * @param array<string, mixed> $metadata Inhalt der block.json.
+	 * @return array<string, mixed>
+	 */
+	public static function translate_block_defaults( array $settings, array $metadata ): array {
+		if ( 'local-reviews/badge' === ( $metadata['name'] ?? '' ) ) {
+			$defaults = self::badge_defaults();
+			foreach ( [ 'label', 'link_text' ] as $key ) {
+				if ( isset( $settings['attributes'][ $key ] ) ) {
+					$settings['attributes'][ $key ]['default'] = $defaults[ $key ];
+				}
+			}
+		}
+		return $settings;
 	}
 
 	/**
@@ -424,11 +448,13 @@ final class Render {
 		self::enqueue_style();
 
 		$summary = Profile::summary();
+		$variant = self::badge_variant( $args );
 
-		// Anzahl laut Google oder die der sichtbaren Bewertungen im Plugin.
-		$mode = in_array( $args['count'], [ 'google', 'local' ], true ) ? $args['count'] : (string) Settings::get( 'badge_count' );
+		// Sichtbare Bewertungen einmal laden: für die lokale Anzahl und die Plattform-Zeile.
+		$mode    = in_array( $args['count'], [ 'google', 'local' ], true ) ? $args['count'] : (string) Settings::get( 'badge_count' );
+		$visible = 'local' === $mode || 'stacked' === $variant ? Profile::visible() : [];
 		if ( 'local' === $mode ) {
-			$local            = Profile::local_summary();
+			$local            = Profile::local_summary( $visible );
 			$summary['count'] = $local['count'];
 			// Sterne weiter nach Google-Note; ohne Google-Daten der Schnitt im Plugin.
 			if ( $summary['rating'] <= 0 ) {
@@ -441,9 +467,8 @@ final class Render {
 			return self::is_editor_preview() ? '<p class="lr-notice">' . esc_html__( 'Badge: Noch keine Bewertungen. API-Key und Place ID unter Einstellungen > Local Reviews eintragen oder Bewertungen importieren.', 'local-reviews' ) . '</p>' : '';
 		}
 
-		$variant = self::badge_variant( $args );
 		$classes = self::classes( 'lr-badge' . ( 'stacked' === $variant ? ' lr-badge--stacked' : '' ), (string) $args['wrapper_class'] );
-		$parts   = 'stacked' === $variant ? self::badge_stacked( $args, $summary ) : self::badge_classic( $args, $summary );
+		$parts   = 'stacked' === $variant ? self::badge_stacked( $args, $summary, $visible ) : self::badge_classic( $args, $summary );
 
 		$url = '';
 		if ( 'google' === $args['link'] ) {
@@ -507,10 +532,11 @@ final class Render {
 	 *
 	 * @param array<string, mixed>             $args    Attribute des Badges.
 	 * @param array{rating: float, count: int} $summary Note und Anzahl.
+	 * @param array<int, array<string, mixed>> $visible Sichtbare Bewertungen für die Plattform-Zeile.
 	 */
-	private static function badge_stacked( array $args, array $summary ): string {
-		// Logo (falls gewählt), Note und Sterne in der ersten Zeile.
-		$top = self::badge_logo( self::logo_mode( $args ) );
+	private static function badge_stacked( array $args, array $summary, array $visible ): string {
+		// Logo (nur wenn ausdrücklich gewählt), Note und Sterne in der ersten Zeile.
+		$top = self::badge_logo( self::stacked_logo_mode( $args ) );
 		if ( self::bool( $args['rating'] ) ) {
 			$top .= '<span class="lr-badge__rating">' . esc_html( number_format_i18n( $summary['rating'], 1 ) ) . '</span>';
 		}
@@ -519,7 +545,7 @@ final class Render {
 		$main    = '<span class="lr-badge__main">';
 		$main   .= '<span class="lr-badge__top">' . $top . '</span>';
 		$main   .= '<span class="lr-badge__count">' . esc_html( trim( number_format_i18n( $summary['count'] ) . ' ' . (string) $args['label'] ) ) . '</span>';
-		$subline = '' !== trim( (string) $args['subline'] ) ? trim( (string) $args['subline'] ) : self::platforms_line();
+		$subline = '' !== trim( (string) $args['subline'] ) ? trim( (string) $args['subline'] ) : self::platforms_line( $visible );
 		if ( '' !== $subline ) {
 			$main .= '<span class="lr-badge__sub">' . esc_html( $subline ) . '</span>';
 		}
@@ -542,9 +568,11 @@ final class Render {
 	 *
 	 * Höchstens drei Plattformen, die häufigste zuerst. Bei nur einer Plattform
 	 * „auf Google“, ohne Bewertungen im Plugin leer.
+	 *
+	 * @param array<int, array<string, mixed>> $visible Sichtbare Bewertungen.
 	 */
-	private static function platforms_line(): string {
-		$names = array_slice( Profile::platforms(), 0, 3 );
+	private static function platforms_line( array $visible ): string {
+		$names = array_slice( Profile::platforms( $visible ), 0, 3 );
 		if ( [] === $names ) {
 			return '';
 		}
@@ -588,6 +616,29 @@ final class Render {
 		}
 		$setting = (string) Settings::get( 'badge_logo' );
 		return in_array( $setting, $modes, true ) ? $setting : 'google';
+	}
+
+	/**
+	 * Logo der gestapelten Variante.
+	 *
+	 * Der Google-Schriftzug passt nicht über eine Zeile wie „u. a. auf Google, 11880 &
+	 * GoLocal“. Deshalb zeigt die gestapelte Variante ihn nur, wenn er am Badge selbst
+	 * gewählt ist (Block „Logo“ bzw. brand="google"), nicht über die Einstellung.
+	 * Ein eigenes Bild aus der Einstellung bleibt sichtbar.
+	 *
+	 * @param array<string, mixed> $args Attribute des Badges.
+	 */
+	private static function stacked_logo_mode( array $args ): string {
+		$mode = self::logo_mode( $args );
+		if ( 'google' !== $mode ) {
+			return $mode;
+		}
+		foreach ( [ 'logo', 'brand' ] as $key ) {
+			if ( ! is_bool( $args[ $key ] ) && 'google' === strtolower( trim( (string) $args[ $key ] ) ) ) {
+				return 'google';
+			}
+		}
+		return 'none';
 	}
 
 	/**

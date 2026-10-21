@@ -4,7 +4,7 @@ Tags: google reviews, bewertungen, rezensionen, places api, testimonials
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,14 @@ Snippets deaktivieren, Plugin aktivieren – Archiv, Note, Anzahl und Direktlink
 Alle Daten des Plugins (Einstellungen, Key, Archiv, Foto in uploads/local-reviews) werden gelöscht. Daten der alten Snippets bleiben unberührt.
 
 == Changelog ==
+
+= 1.5.3 =
+* Gestapelter Badge: Google-Schriftzug nur noch, wenn er am Badge selbst gewählt ist (Block „Logo“ bzw. brand="google"); die Einstellung „Google-Schriftzug“ gilt dort nicht mehr, weil sie der Plattform-Zeile widerspricht. Ein eigenes Bild bleibt sichtbar.
+* Gestapelter Badge ohne Link: kein Hand-Zeiger und keine Hover-Unterstreichung mehr am Linktext, der Mauszeiger folgt dem umgebenden Element (z. B. Overlay-Auslöser).
+* Plattform-Zeile: Bewertungen mit einem per Filter entfernten Plattform-Kürzel erscheinen nicht mehr als „Sonstige“.
+* Badge im Fließtext sitzt wieder auf der Textbaseline (overflow: clip statt hidden).
+* Block „Bewertungs-Badge“: Standardtexte für Anzahl und Linktext sind übersetzbar; der Schalter „Pfeil am Ende“ ist bei gestapelter Variante ohne Linktext ausgeblendet.
+* Intern: Plattformliste wird nur noch einmal pro Badge geladen, Sichtbare-Bewertungen-Abfrage nicht mehr doppelt.
 
 = 1.5.2 =
 * Gestapelter Badge: Der Linktext steht rechts, solange er daneben passt, und rutscht erst bei echtem Platzmangel darunter, abhängig vom Platz im Container statt von einer festen Bildschirmbreite (vorher immer unter 480 px). Die Trennlinie verschwindet dann automatisch.

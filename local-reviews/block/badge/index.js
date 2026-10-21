@@ -61,7 +61,15 @@
 							}
 						} ),
 						toggleControl( props, 'rating', __( 'Note als Zahl', 'local-reviews' ) ),
-						toggleControl( props, 'arrow', __( 'Pfeil am Ende', 'local-reviews' ) ),
+						// Gestapelt steht der Pfeil hinter dem Linktext; ohne Linktext hätte der Schalter keine Wirkung.
+						! ( 'classic' !== attrs.variant && '' === attrs.link_text ) && el( components.ToggleControl, {
+							label: __( 'Pfeil am Ende', 'local-reviews' ),
+							help: __( 'Klassisch „›“ hinter der Anzahl, gestapelt „→“ hinter dem Linktext.', 'local-reviews' ),
+							checked: !! attrs.arrow,
+							onChange: function ( value ) {
+								props.setAttributes( { arrow: value } );
+							}
+						} ),
 						// Nur für die gestapelte Variante; bei „Wie in den Einstellungen“ ebenfalls zeigen,
 						// weil der Editor die globale Einstellung nicht kennt.
 						'classic' !== attrs.variant && el( components.TextControl, {

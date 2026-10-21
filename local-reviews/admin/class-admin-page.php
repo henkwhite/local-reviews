@@ -745,7 +745,7 @@ final class Admin_Page {
 							<button type="button" class="button lr-media-select" data-target="lr-logo" data-radio="badge_logo"><?php esc_html_e( 'Bild wählen', 'local-reviews' ); ?></button>
 							<button type="button" class="button-link lr-media-remove" data-target="lr-logo"<?php echo $local_reviews_logo ? '' : ' hidden'; ?>><?php esc_html_e( 'Entfernen', 'local-reviews' ); ?></button>
 						</div>
-						<p class="description"><?php esc_html_e( 'Pro Badge überschreibbar (Block-Einstellung „Logo“ bzw. brand="google|none|image").', 'local-reviews' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Pro Badge überschreibbar (Block-Einstellung „Logo“ bzw. brand="google|none|image"). Die gestapelte Variante zeigt den Google-Schriftzug nur, wenn er am Badge selbst gewählt ist.', 'local-reviews' ); ?></p>
 					</td>
 				</tr>
 				<tr>

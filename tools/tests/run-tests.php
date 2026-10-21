@@ -1049,7 +1049,7 @@ ok( str_contains( $h, '<span class="lr-badge__sub">u. a. auf Google, 11880 &amp;
 ok( str_contains( $h, '</span></span><span class="lr-badge__cta">Alle Bewertungen ansehen <span class="lr-badge__cta-arrow" aria-hidden="true">→</span></span>' ), 'stacked: Linktext direkt nach dem Hauptteil (Linie per CSS), Pfeil' );
 ok( str_contains( $h, 'lr-badge__stars' ) && ! str_contains( $h, 'lr-badge__arrow' ), 'stacked: Sterne, kein klassischer Pfeil' );
 $h = do_shortcode( '[google_badge_einzeln variant="stacked" link_text="" arrow="0" subline="Eigene <b>Zeile</b>"]' );
-ok( ! str_contains( $h, 'lr-badge__cta' ) && ! str_contains( $h, 'lr-badge__divider' ), 'link_text leer: kein Linktext, damit keine Trennlinie' );
+ok( ! str_contains( $h, 'lr-badge__cta' ), 'link_text leer: kein Linktext (Trennlinie hängt per CSS daran)' );
 ok( str_contains( $h, '<span class="lr-badge__sub">Eigene &lt;b&gt;Zeile&lt;/b&gt;</span>' ), 'subline eigener Text, escaped' );
 $h = do_shortcode( '[google_badge_einzeln variant="stacked" link="google" link_text="Mehr" arrow="0"]' );
 ok( str_starts_with( $h, '<a class="lr-badge lr-badge--stacked" href="https://www.google.com/maps/place//data=liste" target="_blank" rel="noopener nofollow">' ) && str_contains( $h, '<span class="lr-badge__cta">Mehr</span>' ), 'stacked mit Link: ganzes Badge als <a>, Pfeil aus', mb_substr( $h, 0, 140 ) );
@@ -1077,7 +1077,29 @@ seed(
 ok( [ 'Houzz', 'MyHammer', 'Trustpilot', 'werkenntdenbesten' ] === Profile::platforms(), 'platforms(): „Sonstige“ ohne Namen fehlt, Freitext zählt, alphabetisch ohne Groß/Klein', dump( Profile::platforms() ) );
 $h = do_shortcode( '[google_badge_einzeln variant="stacked" rating="1"]' );
 ok( str_contains( $h, '<span class="lr-badge__sub">u. a. auf Houzz, MyHammer &amp; Trustpilot</span>' ), 'mehr als drei Plattformen: nur die ersten drei', dump( $h ) );
-ok( str_contains( $h, '<span class="lr-badge__top"><span class="lr-badge__brand"' ) && str_contains( $h, '<span class="lr-badge__rating">' . number_format_i18n( 4.9, 1 ) . '</span><span class="lr-badge__stars' ), 'stacked: Logo, Note und Sterne in der ersten Zeile' );
+ok( str_contains( $h, '<span class="lr-badge__top"><span class="lr-badge__rating">' . number_format_i18n( 4.9, 1 ) . '</span><span class="lr-badge__stars' ) && ! str_contains( $h, 'lr-badge__brand' ), 'stacked: Einstellung google zeigt kein Logo, Note und Sterne in der ersten Zeile' );
+ok( str_contains( do_shortcode( '[google_badge_einzeln variant="stacked" brand="google"]' ), '<span class="lr-badge__top"><span class="lr-badge__brand"' ), 'stacked brand="google": Schriftzug ausdrücklich gewählt' );
+ok( str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge {"variant":"stacked","logo":"google"} /-->' )[0] ), 'lr-badge__brand' ), 'stacked Block logo=google: Schriftzug' );
+$img = imagecreatetruecolor( 40, 10 );
+ob_start();
+imagepng( $img );
+$up  = wp_upload_bits( 'lr-logo-stacked.png', null, (string) ob_get_clean() );
+$att = wp_insert_attachment( [ 'post_mime_type' => 'image/png', 'post_title' => 'Logo' ], $up['file'] );
+Settings::update( [ 'badge_logo' => 'image', 'badge_logo_id' => $att ] );
+ok( str_contains( do_shortcode( '[google_badge_einzeln variant="stacked"]' ), 'class="lr-badge__logo"' ), 'stacked: eigenes Bild aus der Einstellung bleibt sichtbar' );
+wp_delete_attachment( $att, true );
+Settings::update( [ 'badge_logo' => 'google' ] );
+// Per Filter entferntes Kürzel: Einträge zählen nicht als „Sonstige“.
+$lr_drop_houzz = static function ( array $list ): array {
+	unset( $list['houzz'] );
+	return $list;
+};
+add_filter( 'local_reviews_sources', $lr_drop_houzz );
+ok( [ 'MyHammer', 'Trustpilot', 'werkenntdenbesten' ] === Profile::platforms(), 'platforms(): per Filter entferntes Kürzel ohne eigenen Namen fällt weg, kein „Sonstige“', dump( Profile::platforms() ) );
+remove_filter( 'local_reviews_sources', $lr_drop_houzz );
+// Übersetzte Block-Standardwerte kommen aus badge_defaults().
+$lr_badge_type = WP_Block_Type_Registry::get_instance()->get_registered( 'local-reviews/badge' );
+ok( $lr_badge_type && LocalReviews\Render::badge_defaults()['link_text'] === ( $lr_badge_type->attributes['link_text']['default'] ?? null ) && LocalReviews\Render::badge_defaults()['label'] === ( $lr_badge_type->attributes['label']['default'] ?? null ), 'Block-Defaults label/link_text aus badge_defaults() (übersetzbar)' );
 ok( str_starts_with( do_shortcode( '[google_badge_einzeln variant="stacked" link="custom" url="#bewertungen"]' ), '<a class="lr-badge lr-badge--stacked" href="#bewertungen">' ), 'stacked mit Anker: ohne target' );
 ok( str_contains( render_block( parse_blocks( '<!-- wp:local-reviews/badge {"variant":"stacked"} /-->' )[0] ), '>Alle Bewertungen ansehen <span class="lr-badge__cta-arrow"' ), 'Block ohne Angabe: Standard-Linktext' );
 seed( [ entry( 'w1', [ 'name' => 'Nur Google' ] ) ] );

@@ -57,15 +57,25 @@ final class Profile {
 	}
 
 	/**
+	 * Sichtbare Bewertungen im Plugin (alle Plattformen, ohne ausgeblendete).
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function visible(): array {
+		return Store::query( [ 'limit' => 0 ] );
+	}
+
+	/**
 	 * Anzahl und Durchschnitt der sichtbaren Bewertungen im Plugin (alle Plattformen,
 	 * ohne ausgeblendete).
 	 *
+	 * @param array<int, array<string, mixed>>|null $visible Ergebnis von visible(), falls schon geladen.
 	 * @return array{rating: float, count: int}
 	 */
-	public static function local_summary(): array {
-		$visible = Store::query( [ 'limit' => 0 ] );
-		$count   = count( $visible );
-		$sum     = array_sum( array_column( $visible, 'rating' ) );
+	public static function local_summary( ?array $visible = null ): array {
+		$visible ??= self::visible();
+		$count     = count( $visible );
+		$sum       = array_sum( array_column( $visible, 'rating' ) );
 		return [
 			'rating' => $count > 0 ? round( $sum / $count, 1 ) : 0.0,
 			'count'  => $count,
@@ -76,19 +86,28 @@ final class Profile {
 	 * Namen der Plattformen mit sichtbaren Bewertungen, die häufigste zuerst.
 	 *
 	 * Bei gleicher Anzahl steht Google vorn, danach alphabetisch (ohne Groß/Klein).
-	 * Einträge unter „Sonstige“ zählen nach ihrem eigenen Namen, ohne Namen gar nicht.
+	 * Einträge unter „Sonstige“ und Einträge mit einem nicht (mehr) bekannten Kürzel
+	 * zählen nach ihrem eigenen Namen, ohne Namen gar nicht. „Sonstige“ ist keine
+	 * Plattform, die man nennen kann.
 	 *
+	 * @param array<int, array<string, mixed>>|null $visible Ergebnis von visible(), falls schon geladen.
 	 * @return list<string>
 	 */
-	public static function platforms(): array {
-		$counts = [];
-		foreach ( Store::query( [ 'limit' => 0 ] ) as $entry ) {
-			$own = (string) ( $entry['source_label'] ?? '' );
-			// „Sonstige“ ohne eigenen Namen ist keine Plattform, die man nennen kann.
-			if ( 'other' === $entry['source'] && '' === trim( $own ) ) {
-				continue;
+	public static function platforms( ?array $visible = null ): array {
+		$visible ??= self::visible();
+		$known     = Sources::all(); // Einmal holen, nicht pro Eintrag den Filter laufen lassen.
+		$counts    = [];
+		foreach ( $visible as $entry ) {
+			$slug = (string) $entry['source'];
+			$own  = trim( (string) ( $entry['source_label'] ?? '' ) );
+			if ( 'other' === $slug || ! isset( $known[ $slug ] ) ) {
+				if ( '' === $own ) {
+					continue;
+				}
+				$label = $own;
+			} else {
+				$label = $known[ $slug ];
 			}
-			$label            = Sources::label( (string) $entry['source'], $own );
 			$counts[ $label ] = ( $counts[ $label ] ?? 0 ) + 1;
 		}
 		$labels = array_map( 'strval', array_keys( $counts ) );

@@ -291,17 +291,27 @@ a.lr-source:focus {
 
 .lr-badge.lr-badge--stacked {
 	/* Linktext bleibt rechts, bis er wirklich nicht mehr daneben passt, dann rutscht er darunter.
-	 * overflow: hidden schneidet die Trennlinie ab, sobald der Linktext am Zeilenanfang steht. */
+	 * overflow schneidet die Trennlinie ab, sobald der Linktext am Zeilenanfang steht.
+	 * clip statt hidden: kein Scroll-Container, die Baseline bleibt die der ersten Zeile,
+	 * damit der Badge im Fließtext wie die klassische Variante sitzt. hidden ist der
+	 * Rückfall für Browser ohne clip. */
 	align-items: stretch;
 	flex-wrap: wrap;
 	gap: 0.7em 0;
 	overflow: hidden;
+	overflow: clip;
 	font-family: inherit;
 	color: var(--lr-badge-text, var(--contrast, #222));
 }
 
 .lr-badge--stacked:hover {
 	opacity: 1;
+}
+
+/* Ohne Link ist der Badge ein <div>: Mauszeiger vom Elternelement übernehmen (Hand nur,
+ * wenn z. B. ein umgebender Overlay-Auslöser klickbar ist), keine Hover-Unterstreichung. */
+div.lr-badge--stacked {
+	cursor: inherit;
 }
 
 .lr-badge--stacked .lr-badge__main {
@@ -373,8 +383,8 @@ a.lr-source:focus {
 	color: var(--lr-badge-link, var(--accent, #1e8fa3));
 }
 
-.lr-badge--stacked:hover .lr-badge__cta,
-.lr-badge--stacked:focus-visible .lr-badge__cta {
+a.lr-badge--stacked:hover .lr-badge__cta,
+a.lr-badge--stacked:focus-visible .lr-badge__cta {
 	text-decoration: underline;
 }
 
